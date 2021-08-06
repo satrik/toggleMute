@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Application-->
+        <scene sceneID="JPo-4y-FX3">
+            <objects>
+                <application id="hnw-xV-0zn" sceneMemberID="viewController">
+                    <menu key="mainMenu" title="Main Menu" systemMenu="main" id="AYu-sK-qS6"/>
+                    <connections>
+                        <outlet property="delegate" destination="Voe-Tx-rLC" id="PrD-fu-P6m"/>
+                    </connections>
+                </application>
+                <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="toggleMute" customModuleProvider="target"/>
+                <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
+                <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-211" y="-180"/>
+        </scene>
+        <!--Settings View Controller-->
+        <scene sceneID="MIo-eh-qNu">
+            <objects>
+                <viewController storyboardIdentifier="SettingsController" id="aIO-ci-xyZ" customClass="SettingsViewController" customModule="toggleMute" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="GQP-k5-Kfj">
+                        <rect key="frame" x="0.0" y="0.0" width="153" height="91"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="09C-uc-Vc0">
+                                <rect key="frame" x="13" y="54" width="123" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="check" title="Launch at Login" bezelStyle="regularSquare" imagePosition="left" inset="2" id="6xX-4F-EZv">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="didTouchLaunchAtLogin:" target="aIO-ci-xyZ" id="xKb-wu-Z4j"/>
+                                </connections>
+                            </button>
+                            <button hidden="YES" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="23p-vS-LhM">
+                                <rect key="frame" x="45" y="66" width="65" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="check" title="Check" bezelStyle="regularSquare" imagePosition="left" inset="2" id="n9X-ih-BfR">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="didTouchRandom:" target="aIO-ci-xyZ" id="ybj-Ck-LP9"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="J5i-rV-IWc">
+                                <rect key="frame" x="9" y="19" width="132" height="19"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="roundRect" title="Quit" bezelStyle="roundedRect" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" id="DYw-NE-oge">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="didTouchClose:" target="aIO-ci-xyZ" id="yL3-Pn-Mxe"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                    </view>
+                    <connections>
+                        <outlet property="launchAtLoginCheckBox" destination="09C-uc-Vc0" id="26M-gn-LQB"/>
+                        <outlet property="quitButton" destination="J5i-rV-IWc" id="FAg-qz-Z3W"/>
+                        <outlet property="randomCheckBox" destination="23p-vS-LhM" id="qbM-6M-RBl"/>
+                    </connections>
+                </viewController>
+                <customObject id="jy5-cl-vqi" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-80.5" y="104.5"/>
+        </scene>
+        <!--Main Controller-->
+        <scene sceneID="hNI-qx-ODP">
+            <objects>
+                <viewController storyboardIdentifier="MainController" id="UKh-ye-bPO" customClass="MainController" customModule="toggleMute" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="wBh-Ot-TGR">
+                        <rect key="frame" x="0.0" y="0.0" width="226" height="92"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2yx-zG-KVq">
+                                <rect key="frame" x="179" y="63" width="29" height="16"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="000" id="yEl-Im-KIq">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <slider verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xQD-3C-Krn">
+                                <rect key="frame" x="18" y="24" width="190" height="28"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="jWU-Hq-Rpy"/>
+                                <connections>
+                                    <action selector="didChangeSlider:" target="UKh-ye-bPO" id="Eoi-uy-Gam"/>
+                                </connections>
+                            </slider>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yeF-nR-gkA">
+                                <rect key="frame" x="18" y="63" width="152" height="16"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Default Unmute Volume:" id="I8W-T9-gRc">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eUb-02-Abd">
+                                <rect key="frame" x="8" y="2.5" width="20.5" height="28"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="gear" catalog="system" imagePosition="only" alignment="center" imageScaling="proportionallyUpOrDown" inset="2" id="F0c-AH-T1F">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="didTouchSettings:" target="UKh-ye-bPO" id="Zf9-7W-2CZ"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                    </view>
+                    <connections>
+                        <outlet property="inputValueLabel" destination="2yx-zG-KVq" id="mrb-tY-Fm5"/>
+                        <outlet property="inputValueSlider" destination="xQD-3C-Krn" id="8kg-je-A8A"/>
+                        <outlet property="settingsButton" destination="eUb-02-Abd" id="mn5-li-A9G"/>
+                    </connections>
+                </viewController>
+                <customObject id="9rx-D2-iUG" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-453" y="33"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="gear" catalog="system" width="17" height="17"/>
+    </resources>
+</document>
