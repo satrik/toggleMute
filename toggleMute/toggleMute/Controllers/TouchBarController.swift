@@ -35,7 +35,6 @@ class TouchBarController {
 
     func configureUI() {
         
-//        item.view = button
         touchBarButton = NSButton(image: imageUnmute!, target: self, action: #selector(toggleMuteStateObj))
         item.view = touchBarButton!
         DFRSystemModalShowsCloseBoxWhenFrontMost(false)
@@ -61,12 +60,18 @@ class TouchBarController {
     }
     
     func setNewVolume(newValue: Int) {
-        //let getCurrentInputVolume = "return input volume of (get volume settings)"
-        let setInputVolume = "set volume input volume \(newValue)"
+
+       let setInputAndResetOutputVolume =
+            """
+            set volume input volume \(newValue)
+            set currentVol to output volume of (get volume settings)
+            set volume output volume currentVol
+            """
         var error: NSDictionary?
-        if let scriptObject = NSAppleScript(source: setInputVolume) {
+        if let scriptObject = NSAppleScript(source: setInputAndResetOutputVolume) {
            scriptObject.executeAndReturnError(&error)
         }
+        
     }
     
     func toggleMuteState() {
