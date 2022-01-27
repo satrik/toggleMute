@@ -86,8 +86,9 @@ class TouchBarController {
     func toggleMuteStateHard(setMute: Bool) {
         
         let button = delegateController.statusItem.button
-        
-        if(!setMute){
+        isMuted = defaults.bool(forKey: "isMuted")
+
+        if(!setMute && isMuted){
             defaults.set(false, forKey: "isMuted")
             button?.image = imageUnmute
             touchBarButton?.image = imageUnmute
@@ -97,7 +98,7 @@ class TouchBarController {
                 unmuteVal = defaults.integer(forKey: "defaultInputVol")
             }
             setNewVolume(newValue: unmuteVal)
-        } else {
+        } else if(setMute && !isMuted) {
             defaults.set(true, forKey: "isMuted")
             button?.image = imageMute
             touchBarButton?.image = imageMute
