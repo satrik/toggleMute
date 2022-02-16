@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		42DC250427BD487100639D5F /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = 42DC250327BD487100639D5F /* KeyboardShortcuts */; };
 		447B1DF9236795F100587E3A /* MainController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 447B1DF8236795F100587E3A /* MainController.swift */; };
 		449F396A2317247B008A0DBD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449F39692317247B008A0DBD /* AppDelegate.swift */; };
 		449F396C2317247C008A0DBD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 449F396B2317247C008A0DBD /* Assets.xcassets */; };
@@ -59,6 +60,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BD391AE9263C3F5600848049 /* LaunchAtLogin in Frameworks */,
+				42DC250427BD487100639D5F /* KeyboardShortcuts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -179,6 +181,7 @@
 			name = toggleMute;
 			packageProductDependencies = (
 				BD391AE8263C3F5600848049 /* LaunchAtLogin */,
+				42DC250327BD487100639D5F /* KeyboardShortcuts */,
 			);
 			productName = NootNootBar;
 			productReference = 449F39662317247B008A0DBD /* toggleMute.app */;
@@ -212,6 +215,7 @@
 			mainGroup = 449F395D2317247B008A0DBD;
 			packageReferences = (
 				BD391AE7263C3F5600848049 /* XCRemoteSwiftPackageReference "LaunchAtLogin" */,
+				42DC250227BD487100639D5F /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */,
 			);
 			productRefGroup = 449F39672317247B008A0DBD /* Products */;
 			projectDirPath = "";
@@ -426,7 +430,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2;
 				OTHER_LDFLAGS = (
 					"-framework",
 					DFRFoundation,
@@ -460,7 +464,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2;
 				OTHER_LDFLAGS = (
 					"-framework",
 					DFRFoundation,
@@ -496,6 +500,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		42DC250227BD487100639D5F /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sindresorhus/KeyboardShortcuts";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.4.0;
+			};
+		};
 		BD391AE7263C3F5600848049 /* XCRemoteSwiftPackageReference "LaunchAtLogin" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/sindresorhus/LaunchAtLogin";
@@ -507,6 +519,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		42DC250327BD487100639D5F /* KeyboardShortcuts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 42DC250227BD487100639D5F /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */;
+			productName = KeyboardShortcuts;
+		};
 		BD391AE8263C3F5600848049 /* LaunchAtLogin */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = BD391AE7263C3F5600848049 /* XCRemoteSwiftPackageReference "LaunchAtLogin" */;

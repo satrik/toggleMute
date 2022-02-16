@@ -1,6 +1,7 @@
 // Author: Sascha Petrik
 
 import Cocoa
+import KeyboardShortcuts
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
@@ -30,11 +31,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         touchBarController.configureUI()
         
-        if preferences.randomNootNootEnabled {
+        KeyboardShortcuts.onKeyDown(for: .toggleMuteShortcut) {
+            self.touchBarController.toggleMuteState()
         }
         
     }
-    
+
     @objc func runTimedCode(){
 
         mainController.getCurrentVolume()

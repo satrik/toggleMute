@@ -2,13 +2,17 @@
 
 import Cocoa
 import LaunchAtLogin
+import KeyboardShortcuts
+
+extension KeyboardShortcuts.Name {
+    static let toggleMuteShortcut = Self("toggleMuteShortcut", default: .init(.k, modifiers: [.command, .option]))
+}
 
 class SettingsViewController: NSViewController {
 
     @IBOutlet var launchAtLoginCheckBox: NSButton!
-    @IBOutlet var randomCheckBox: NSButton!
     @IBOutlet var quitButton: NSButton!
-
+    @IBOutlet weak var shortcutSubView: NSView!
     private var preferences: Preferences!
 
     static func instantiate(with preferences: Preferences) -> SettingsViewController {
@@ -27,17 +31,20 @@ class SettingsViewController: NSViewController {
 
         launchAtLoginCheckBox.state = preferences.launchAtLoginEnabled ? .on : .off
         launchAtLoginCheckBox.title = NSLocalizedString("launchAtLogin", comment: "")
-        randomCheckBox.state = preferences.randomNootNootEnabled ? .on : .off
-        randomCheckBox.title = NSLocalizedString("random", comment: "")
-
+        
+        let recorder = KeyboardShortcuts.RecorderCocoa(for: .toggleMuteShortcut)
+        shortcutSubView.addSubview(recorder)
+        
         quitButton.title = NSLocalizedString("quit", comment: "")
+        
     }
-
+    
     override func viewDidDisappear() {
         super.viewDidDisappear()
         NSApp.activate(ignoringOtherApps: true)
     }
-
+    
+    
     @IBAction func didTouchLaunchAtLogin(_ sender: NSButton) {
         preferences.launchAtLoginEnabled = sender.state == .on ? true : false
         LaunchAtLogin.isEnabled = preferences.launchAtLoginEnabled

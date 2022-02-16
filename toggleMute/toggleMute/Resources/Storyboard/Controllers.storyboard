@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="19455" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19455"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -26,11 +26,11 @@
             <objects>
                 <viewController storyboardIdentifier="SettingsController" id="aIO-ci-xyZ" customClass="SettingsViewController" customModule="toggleMute" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="GQP-k5-Kfj">
-                        <rect key="frame" x="0.0" y="0.0" width="153" height="91"/>
+                        <rect key="frame" x="0.0" y="0.0" width="153" height="162"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="09C-uc-Vc0">
-                                <rect key="frame" x="13" y="54" width="123" height="18"/>
+                                <rect key="frame" x="13" y="48" width="123" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="check" title="Launch at Login" bezelStyle="regularSquare" imagePosition="left" inset="2" id="6xX-4F-EZv">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -41,7 +41,7 @@
                                 </connections>
                             </button>
                             <button hidden="YES" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="23p-vS-LhM">
-                                <rect key="frame" x="45" y="66" width="65" height="18"/>
+                                <rect key="frame" x="45" y="60" width="65" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="check" title="Check" bezelStyle="regularSquare" imagePosition="left" inset="2" id="n9X-ih-BfR">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -52,7 +52,7 @@
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="J5i-rV-IWc">
-                                <rect key="frame" x="9" y="19" width="132" height="19"/>
+                                <rect key="frame" x="9" y="13" width="132" height="19"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="roundRect" title="Quit" bezelStyle="roundedRect" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" id="DYw-NE-oge">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -62,17 +62,32 @@
                                     <action selector="didTouchClose:" target="aIO-ci-xyZ" id="yL3-Pn-Mxe"/>
                                 </connections>
                             </button>
+                            <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="soj-dc-sHL" userLabel="ShortCutInput">
+                                <rect key="frame" x="9" y="85" width="135" height="28"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            </customView>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MJg-6Y-ReN">
+                                <rect key="frame" x="18" y="126" width="118" height="16"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Keyboard Shortcut" id="VpL-F4-C9d">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                     </view>
                     <connections>
                         <outlet property="launchAtLoginCheckBox" destination="09C-uc-Vc0" id="26M-gn-LQB"/>
                         <outlet property="quitButton" destination="J5i-rV-IWc" id="FAg-qz-Z3W"/>
                         <outlet property="randomCheckBox" destination="23p-vS-LhM" id="qbM-6M-RBl"/>
+                        <outlet property="shortcutSubView" destination="soj-dc-sHL" id="sB1-e0-1DG"/>
+                        <outlet property="test" destination="soj-dc-sHL" id="B2e-Ie-jC8"/>
                     </connections>
                 </viewController>
                 <customObject id="jy5-cl-vqi" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-80.5" y="104.5"/>
+            <point key="canvasLocation" x="-80.5" y="140"/>
         </scene>
         <!--Main Controller-->
         <scene sceneID="hNI-qx-ODP">
