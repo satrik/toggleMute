@@ -4,7 +4,8 @@ import Cocoa
 
 class MainController: NSViewController {
 
-    @IBOutlet var settingsButton: NSButton!
+    @IBOutlet weak var settingsButton: NSButton!
+    @IBOutlet weak var openGithubButton: NSButton!
     @IBOutlet weak var inputValueLabel: NSTextField!
     @IBOutlet weak var inputValueSlider: NSSlider!
     
@@ -12,6 +13,7 @@ class MainController: NSViewController {
     private var preferences: Preferences!
     private lazy var touchBarController = TouchBarController()
 
+    let repoUrl = URL(string: "https://github.com/satrik/toggleMute")!
     let defaults = UserDefaults.standard
     var currentSetVolume = 0
     
@@ -32,7 +34,7 @@ class MainController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNotifications()
-
+        
         if(isKeyPresentInUserDefaults(key: "defaultInputVol")) {
             inputValueSlider.integerValue = defaults.integer(forKey: "defaultInputVol")
         }
@@ -42,18 +44,27 @@ class MainController: NSViewController {
         label?.stringValue = String(val)
         
         getCurrentVolume()
+        
+        let firstStart = defaults.bool(forKey: "firstStart")
+        let updateAvailable = defaults.bool(forKey: "updateAvailable")
+        
+        if  firstStart && updateAvailable {
+            if dialogOKCancel(question: "Update available", text: "You can download the new version at github") {
+                if NSWorkspace.shared.open(repoUrl) {}
+            }
+        }
+
+        defaults.set(false, forKey: "firstStart")
+
     }
 
-    
     private func setupNotifications() {
         NotificationCenter.default.addObserver(self, selector: #selector(preferencesDidChange), name: Preferences.didChangeNotification, object: nil)
     }
 
-    
     @objc private func preferencesDidChange() {
         // nothing to do currently
     }
-    
     
     @IBAction func didChangeSlider(_ sender: Any) {
         guard let slider = sender as? NSSlider,
@@ -66,7 +77,6 @@ class MainController: NSViewController {
             break
             // nothing to do if drag just started
         case .leftMouseUp, .rightMouseUp:
-            print(val)
             label?.stringValue = String(val)
             defaults.set(val, forKey: "defaultInputVol")
             self.touchBarController.setNewVolume(newValue: val)
@@ -97,4 +107,9 @@ class MainController: NSViewController {
         popoverView.behavior = .transient
         popoverView.show(relativeTo: settingsButton.bounds, of: settingsButton, preferredEdge: .maxY)
     }
+    
+    @IBAction func didTouchOpenGithub(_ sender: Any) {
+        if NSWorkspace.shared.open(repoUrl) {}
+    }
+    
 }
