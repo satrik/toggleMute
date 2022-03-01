@@ -11,10 +11,17 @@ extension KeyboardShortcuts.Name {
 class SettingsViewController: NSViewController {
 
     @IBOutlet var launchAtLoginCheckBox: NSButton!
+    @IBOutlet var redMenuBarCheckBox: NSButton!
     @IBOutlet var quitButton: NSButton!
     @IBOutlet weak var shortcutSubView: NSView!
     private var preferences: Preferences!
+    let defaults = UserDefaults.standard
+    private var delegateController = NSApplication.shared.delegate as! AppDelegate
 
+    func isKeyPresentInUserDefaults(key: String) -> Bool {
+        return UserDefaults.standard.object(forKey: key) != nil
+    }
+    
     static func instantiate(with preferences: Preferences) -> SettingsViewController {
         let storyboard = NSStoryboard(name: "Controllers", bundle: nil)
         guard let settingsController = storyboard.instantiateController(withIdentifier: "SettingsController") as? SettingsViewController else {
@@ -31,6 +38,12 @@ class SettingsViewController: NSViewController {
 
         launchAtLoginCheckBox.state = preferences.launchAtLoginEnabled ? .on : .off
         launchAtLoginCheckBox.title = NSLocalizedString("launchAtLogin", comment: "")
+        
+        if(isKeyPresentInUserDefaults(key: "redMenuBarIcon")) {
+            redMenuBarCheckBox.state = defaults.bool(forKey: "redMenuBarIcon") ? .on : .off
+        } else {
+            redMenuBarCheckBox.state = .off
+        }
         
         let recorder = KeyboardShortcuts.RecorderCocoa(for: .toggleMuteShortcut)
         shortcutSubView.addSubview(recorder)
@@ -50,9 +63,18 @@ class SettingsViewController: NSViewController {
         LaunchAtLogin.isEnabled = preferences.launchAtLoginEnabled
 
     }
+    @IBAction func didTouchRedMenuBarIcon(_ sender: NSButton) {
+        
+        let checkBoxState = sender.state == .on ? true : false
+        let isMuted = defaults.bool(forKey: "isMuted")
+        defaults.set(checkBoxState, forKey: "redMenuBarIcon")
 
-    @IBAction func didTouchRandom(_ sender: NSButton) {
-        preferences.randomNootNootEnabled = sender.state == .on ? true : false
+        if(checkBoxState && isMuted) {
+            delegateController.statusItem.button?.layer?.backgroundColor = CGColor(red: 0.75, green: 0, blue: 0 , alpha: 0.75)
+        } else {
+            delegateController.statusItem.button?.layer?.backgroundColor = CGColor(red: 0, green: 0, blue: 0 , alpha: 0)
+        }
+        
     }
 
     @IBAction func didTouchClose(_ sender: Any) {
