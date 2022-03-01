@@ -15,6 +15,7 @@ class TouchBarController {
     
     let defaults = UserDefaults.standard
     var isMuted = true || false
+    var redIcon = true || false
     
     let imageUnmute = NSImage(named: NSImage.touchBarAudioInputTemplateName)
     let imageMute = NSImage(named: NSImage.touchBarAudioInputMuteTemplateName)
@@ -33,6 +34,12 @@ class TouchBarController {
         return touchBarController
     }
 
+    func test() {
+        if dialogOKCancel(question: "Update available", text: "") {
+            let updateUrl = URL(string: "https://github.com/satrik/toggleMute")!
+                NSWorkspace.shared.open(updateUrl)
+        }
+    }
     func configureUI() {
         
         touchBarButton = NSButton(image: imageUnmute!, target: self, action: #selector(toggleMuteStateObj))
@@ -41,10 +48,18 @@ class TouchBarController {
         NSTouchBarItem.addSystemTrayItem(item)
         DFRElementSetControlStripPresenceForIdentifier(.touchBarButtonIdentifier, true)
         
-        if(isKeyPresentInUserDefaults(key: "isMuted")){
+        if(isKeyPresentInUserDefaults(key: "isMuted")) {
             isMuted = defaults.bool(forKey: "isMuted")
         } else {
             isMuted = false
+        }
+        
+        if(isMuted) {
+            defaults.set(false, forKey: "isMuted")
+            toggleMuteStateHard(setMute: true)
+        } else {
+            defaults.set(true, forKey: "isMuted")
+            toggleMuteStateHard(setMute: false)
         }
     
     }
@@ -87,12 +102,14 @@ class TouchBarController {
         
         let button = delegateController.statusItem.button
         isMuted = defaults.bool(forKey: "isMuted")
-
+        redIcon = defaults.bool(forKey: "redMenuBarIcon")
+        
         if(!setMute && isMuted){
             defaults.set(false, forKey: "isMuted")
             button?.image = imageUnmute
+            button?.layer?.backgroundColor = CGColor(red: 0, green: 0, blue: 0 , alpha: 0)
             touchBarButton?.image = imageUnmute
-            touchBarButton?.bezelColor = NSColor.clear
+            touchBarButton?.bezelColor = NSColor.white
             var unmuteVal = 80
             if(isKeyPresentInUserDefaults(key: "defaultInputVol")){
                 unmuteVal = defaults.integer(forKey: "defaultInputVol")
@@ -101,6 +118,9 @@ class TouchBarController {
         } else if(setMute && !isMuted) {
             defaults.set(true, forKey: "isMuted")
             button?.image = imageMute
+            if(redIcon){
+                button?.layer?.backgroundColor = CGColor(red: 0.75, green: 0, blue: 0 , alpha: 0.75)
+            }
             touchBarButton?.image = imageMute
             touchBarButton?.bezelColor = NSColor.red
             setNewVolume(newValue: 0)
