@@ -26,13 +26,13 @@
             <objects>
                 <viewController storyboardIdentifier="SettingsController" id="aIO-ci-xyZ" customClass="SettingsViewController" customModule="toggleMute" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="GQP-k5-Kfj">
-                        <rect key="frame" x="0.0" y="0.0" width="153" height="162"/>
+                        <rect key="frame" x="0.0" y="0.0" width="175" height="182"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="09C-uc-Vc0">
-                                <rect key="frame" x="13" y="48" width="123" height="18"/>
+                                <rect key="frame" x="18" y="52" width="119" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <buttonCell key="cell" type="check" title="Launch at Login" bezelStyle="regularSquare" imagePosition="left" inset="2" id="6xX-4F-EZv">
+                                <buttonCell key="cell" type="check" title="Launch at login" bezelStyle="regularSquare" imagePosition="left" inset="2" id="6xX-4F-EZv">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
@@ -40,19 +40,19 @@
                                     <action selector="didTouchLaunchAtLogin:" target="aIO-ci-xyZ" id="xKb-wu-Z4j"/>
                                 </connections>
                             </button>
-                            <button hidden="YES" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="23p-vS-LhM">
-                                <rect key="frame" x="45" y="60" width="65" height="18"/>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="T0j-LS-G9b">
+                                <rect key="frame" x="18" y="78" width="141" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <buttonCell key="cell" type="check" title="Check" bezelStyle="regularSquare" imagePosition="left" inset="2" id="n9X-ih-BfR">
+                                <buttonCell key="cell" type="check" title="Red Menubar Mute" bezelStyle="regularSquare" imagePosition="left" inset="2" id="ZwO-CH-Rfw">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="didTouchRandom:" target="aIO-ci-xyZ" id="ybj-Ck-LP9"/>
+                                    <action selector="didTouchRedMenuBarIcon:" target="aIO-ci-xyZ" id="V0B-HI-n1Z"/>
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="J5i-rV-IWc">
-                                <rect key="frame" x="9" y="13" width="132" height="19"/>
+                                <rect key="frame" x="18" y="19" width="139" height="19"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="roundRect" title="Quit" bezelStyle="roundedRect" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" id="DYw-NE-oge">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -62,12 +62,8 @@
                                     <action selector="didTouchClose:" target="aIO-ci-xyZ" id="yL3-Pn-Mxe"/>
                                 </connections>
                             </button>
-                            <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="soj-dc-sHL" userLabel="ShortCutInput">
-                                <rect key="frame" x="9" y="85" width="135" height="28"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            </customView>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MJg-6Y-ReN">
-                                <rect key="frame" x="18" y="126" width="118" height="16"/>
+                                <rect key="frame" x="28" y="146" width="118" height="16"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Keyboard Shortcut" id="VpL-F4-C9d">
                                     <font key="font" metaFont="system"/>
@@ -75,19 +71,23 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="soj-dc-sHL" userLabel="ShortCutInput">
+                                <rect key="frame" x="20" y="107" width="135" height="28"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            </customView>
                         </subviews>
                     </view>
                     <connections>
                         <outlet property="launchAtLoginCheckBox" destination="09C-uc-Vc0" id="26M-gn-LQB"/>
                         <outlet property="quitButton" destination="J5i-rV-IWc" id="FAg-qz-Z3W"/>
-                        <outlet property="randomCheckBox" destination="23p-vS-LhM" id="qbM-6M-RBl"/>
+                        <outlet property="redMenuBarCheckBox" destination="T0j-LS-G9b" id="9Qm-Wr-VEe"/>
                         <outlet property="shortcutSubView" destination="soj-dc-sHL" id="sB1-e0-1DG"/>
                         <outlet property="test" destination="soj-dc-sHL" id="B2e-Ie-jC8"/>
                     </connections>
                 </viewController>
                 <customObject id="jy5-cl-vqi" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-80.5" y="140"/>
+            <point key="canvasLocation" x="-69.5" y="150"/>
         </scene>
         <!--Main Controller-->
         <scene sceneID="hNI-qx-ODP">
@@ -124,7 +124,7 @@
                                 </textFieldCell>
                             </textField>
                             <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eUb-02-Abd">
-                                <rect key="frame" x="8" y="2.5" width="20.5" height="28"/>
+                                <rect key="frame" x="12" y="4.5" width="20.5" height="28"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="gear" catalog="system" imagePosition="only" alignment="center" imageScaling="proportionallyUpOrDown" inset="2" id="F0c-AH-T1F">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -134,11 +134,23 @@
                                     <action selector="didTouchSettings:" target="UKh-ye-bPO" id="Zf9-7W-2CZ"/>
                                 </connections>
                             </button>
+                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Mn1-gX-PHj">
+                                <rect key="frame" x="194" y="5" width="20" height="26"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="safari" catalog="system" imagePosition="only" alignment="center" imageScaling="proportionallyUpOrDown" inset="2" id="ekh-Rg-1yS">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="didTouchOpenGithub:" target="UKh-ye-bPO" id="4dB-d6-o5E"/>
+                                </connections>
+                            </button>
                         </subviews>
                     </view>
                     <connections>
                         <outlet property="inputValueLabel" destination="2yx-zG-KVq" id="mrb-tY-Fm5"/>
                         <outlet property="inputValueSlider" destination="xQD-3C-Krn" id="8kg-je-A8A"/>
+                        <outlet property="openGithubButton" destination="Mn1-gX-PHj" id="sV4-uF-Wkm"/>
                         <outlet property="settingsButton" destination="eUb-02-Abd" id="mn5-li-A9G"/>
                     </connections>
                 </viewController>
@@ -149,5 +161,6 @@
     </scenes>
     <resources>
         <image name="gear" catalog="system" width="17" height="17"/>
+        <image name="safari" catalog="system" width="15" height="15"/>
     </resources>
 </document>
