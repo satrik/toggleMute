@@ -35,13 +35,38 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             self.touchBarController.toggleMuteState()
         }
         
+        defaults.set(false, forKey: "updateAvailable")
+        defaults.set(true, forKey: "firstStart")
+        
+
+        let getlocalVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
+        let stringLocalVersion = getlocalVersion! as NSString
+        let localVersion = stringLocalVersion.doubleValue
+        
+        let url = URL(string: "https://raw.githubusercontent.com/satrik/toggleMute/main/toggleMute/toggleMute.xcodeproj/project.pbxproj")!
+        let configuration = URLSessionConfiguration.ephemeral
+        let session = URLSession(configuration: configuration)
+        let task = session.dataTask(with: url) {(data, response, error) in
+            guard let data = data, error == nil else { return }
+            let getString = String(data: data, encoding: .utf8)!
+            
+            let firstIndex = "MARKETING_VERSION = "
+            let secondIndex = ";"
+            let stringVersion = getString.slice(from: firstIndex, to: secondIndex)
+            let githubVersion = Double(stringVersion!)!
+
+            if githubVersion > localVersion {
+                self.defaults.set(true, forKey: "updateAvailable")
+            }
+        }
+        task.resume()
     }
 
     @objc func runTimedCode(){
 
         mainController.getCurrentVolume()
-        
-        if(defaults.integer(forKey: "currentSetVolume") < 5){
+                
+        if(defaults.integer(forKey: "currentSetVolume") < 5) {
             touchBarController.toggleMuteStateHard(setMute: true)
         } else {
             touchBarController.toggleMuteStateHard(setMute: false)
@@ -89,3 +114,29 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
 }
 
+func isKeyPresentInUserDefaults(key: String) -> Bool {
+    return UserDefaults.standard.object(forKey: key) != nil
+}
+
+func dialogOKCancel(question: String, text: String) -> Bool {
+    
+    let alert = NSAlert()
+    alert.messageText = question
+    alert.informativeText = text
+    alert.alertStyle = .warning
+    alert.addButton(withTitle: "Open github")
+    alert.addButton(withTitle: "Cancel")
+    return alert.runModal() == .alertFirstButtonReturn
+
+}
+
+extension String {
+    
+    func slice(from: String, to: String) -> String? {
+        return (range(of: from)?.upperBound).flatMap { substringFrom in
+            (range(of: to, range: substringFrom..<endIndex)?.lowerBound).map { substringTo in
+                String(self[substringFrom..<substringTo])
+            }
+        }
+    }
+}
