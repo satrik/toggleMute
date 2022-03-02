@@ -109,7 +109,7 @@ class TouchBarController {
             button?.image = imageUnmute
             button?.layer?.backgroundColor = CGColor(red: 0, green: 0, blue: 0 , alpha: 0)
             touchBarButton?.image = imageUnmute
-            touchBarButton?.bezelColor = NSColor.white
+            touchBarButton?.bezelColor = NSColor.clear
             var unmuteVal = 80
             if(isKeyPresentInUserDefaults(key: "defaultInputVol")){
                 unmuteVal = defaults.integer(forKey: "defaultInputVol")
