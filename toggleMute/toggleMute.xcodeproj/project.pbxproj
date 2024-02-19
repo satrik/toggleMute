@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -14,7 +14,6 @@
 		449F397C23172ADC008A0DBD /* Controllers.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 449F397B23172ADC008A0DBD /* Controllers.storyboard */; };
 		449F398323173003008A0DBD /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449F398223173003008A0DBD /* Preferences.swift */; };
 		449F398D23173610008A0DBD /* SettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449F398C23173610008A0DBD /* SettingsController.swift */; };
-		449F39932317375C008A0DBD /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 449F39952317375C008A0DBD /* Localizable.strings */; };
 		44D551E02390830E0065505A /* SharedFileList.m in Sources */ = {isa = PBXBuildFile; fileRef = 44D551DE2390830E0065505A /* SharedFileList.m */; };
 		44EB8BD923AC2ABD005A4A0B /* TouchBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44EB8BD723AC2ABD005A4A0B /* TouchBarController.swift */; };
 		44EB8BDD23AC350D005A4A0B /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44EB8BDB23AC350D005A4A0B /* SettingsViewController.swift */; };
@@ -44,8 +43,6 @@
 		449F397B23172ADC008A0DBD /* Controllers.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Controllers.storyboard; sourceTree = "<group>"; };
 		449F398223173003008A0DBD /* Preferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
 		449F398C23173610008A0DBD /* SettingsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsController.swift; sourceTree = "<group>"; };
-		449F39942317375C008A0DBD /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
-		449F39962317375D008A0DBD /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
 		44D551DD2390830E0065505A /* SettingsController-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SettingsController-Bridging-Header.h"; sourceTree = "<group>"; };
 		44D551DE2390830E0065505A /* SharedFileList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SharedFileList.m; sourceTree = "<group>"; };
 		44D551DF2390830E0065505A /* SharedFileList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedFileList.h; sourceTree = "<group>"; };
@@ -109,7 +106,6 @@
 			isa = PBXGroup;
 			children = (
 				44D551DC239082090065505A /* Storyboard */,
-				449F399023173742008A0DBD /* Localizable */,
 				449F398023172AEE008A0DBD /* Assets */,
 				449F39702317247C008A0DBD /* Info.plist */,
 				449F39712317247C008A0DBD /* SettingsController.entitlements */,
@@ -123,14 +119,6 @@
 				449F396B2317247C008A0DBD /* Assets.xcassets */,
 			);
 			path = Assets;
-			sourceTree = "<group>";
-		};
-		449F399023173742008A0DBD /* Localizable */ = {
-			isa = PBXGroup;
-			children = (
-				449F39952317375C008A0DBD /* Localizable.strings */,
-			);
-			path = Localizable;
 			sourceTree = "<group>";
 		};
 		44D551D923907B7F0065505A /* Support */ = {
@@ -211,6 +199,7 @@
 				en,
 				fr,
 				Base,
+				de,
 			);
 			mainGroup = 449F395D2317247B008A0DBD;
 			packageReferences = (
@@ -232,7 +221,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				449F396C2317247C008A0DBD /* Assets.xcassets in Resources */,
-				449F39932317375C008A0DBD /* Localizable.strings in Resources */,
 				449F397C23172ADC008A0DBD /* Controllers.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -276,18 +264,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXVariantGroup section */
-		449F39952317375C008A0DBD /* Localizable.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				449F39942317375C008A0DBD /* en */,
-				449F39962317375D008A0DBD /* fr */,
-			);
-			name = Localizable.strings;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		449F39722317247C008A0DBD /* Debug */ = {
@@ -418,7 +394,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = MFTS39V3F9;
 				ENABLE_HARDENED_RUNTIME = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -430,7 +406,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 1.4;
+				MARKETING_VERSION = 1.5;
 				OTHER_LDFLAGS = (
 					"-framework",
 					DFRFoundation,
@@ -452,7 +428,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = MFTS39V3F9;
 				ENABLE_HARDENED_RUNTIME = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -464,7 +440,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 1.4;
+				MARKETING_VERSION = 1.5;
 				OTHER_LDFLAGS = (
 					"-framework",
 					DFRFoundation,
@@ -504,16 +480,16 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/sindresorhus/KeyboardShortcuts";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.4.0;
+				kind = exactVersion;
+				version = 1.17.0;
 			};
 		};
 		BD391AE7263C3F5600848049 /* XCRemoteSwiftPackageReference "LaunchAtLogin" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/sindresorhus/LaunchAtLogin";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 4.1.0;
+				kind = exactVersion;
+				version = 5.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

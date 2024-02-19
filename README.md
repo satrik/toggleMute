@@ -1,5 +1,8 @@
 ## toggleMute
 
+### note 
+I don't use a MacBook with Touch Bar anymore. So if there are any issues with the Touch Bar, I can't help/debug by myself
+
 ### functions
 - Single tab/click on the Touch Bar or the Menubar icon will toggle between mute and unmute.
 - Right click on the Menubar icon will show the setting for the default unmute volume. 
@@ -8,8 +11,10 @@
    - click on the little gear symbol will show the option to set a global _Keyboard Shortcut_, the option for _Autostart_ and a _Quit_ button
 
 ### install
-- download and unpack the toggleMute.zip
-- move the _toggleMute.app_ file to the Applications directory
+- download or clone the repo
+- unpack the toggleMute.zip and move toggleMute.app into the Applications folder
+- execute (just double click) the toggleMuteDisableQuarantine.command
+   - if this does not work, you have to execute `xattr -cr /Applications/toggleMute.app` in a terminal
 - start the App the first time via right click > open and "Trust me" :wink:
 - the Touch Bar button is only visible in the "control strip" and can't be moved to any other place
 

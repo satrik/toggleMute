@@ -1,13 +1,14 @@
 // Author: Sascha Petrik
 
 import Cocoa
+import LaunchAtLogin
 import KeyboardShortcuts
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
 
-    let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-    
+    let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+        
     private lazy var preferences = Preferences()
     private lazy var settingsController = SettingsController()
     private lazy var mainController = MainController()
@@ -19,10 +20,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     let imageUnmute = NSImage(named: NSImage.touchBarAudioInputTemplateName)
     let imageMute = NSImage(named: NSImage.touchBarAudioInputMuteTemplateName)
 
+    
     func applicationDidFinishLaunching(_ aNotification: Notification) {
+                
+        LaunchAtLogin.migrateIfNeeded()
+        
         refreshTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(runTimedCode), userInfo: nil, repeats: true)
+        
         if let button = self.statusItem.button {
-            button.image = imageUnmute
+            button.image = touchBarController.imageUnmute?.tint(color: .selectedMenuItemTextColor)
             button.imageScaling = .scaleProportionallyDown
             button.target = self
             button.action = #selector(statusBarButtonClicked)
@@ -38,9 +44,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         defaults.set(false, forKey: "updateAvailable")
         defaults.set(true, forKey: "firstStart")
         
-
         let getlocalVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
         let stringLocalVersion = getlocalVersion! as NSString
+        defaults.set(stringLocalVersion, forKey: "stringLocalVersion")
         let localVersion = stringLocalVersion.doubleValue
         
         let url = URL(string: "https://raw.githubusercontent.com/satrik/toggleMute/main/toggleMute/toggleMute.xcodeproj/project.pbxproj")!
@@ -54,14 +60,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let secondIndex = ";"
             let stringVersion = getString.slice(from: firstIndex, to: secondIndex)
             let githubVersion = Double(stringVersion!)!
-
+            
             if githubVersion > localVersion {
                 self.defaults.set(true, forKey: "updateAvailable")
             }
+            
         }
+        
         task.resume()
+        
     }
 
+    
     @objc func runTimedCode(){
 
         mainController.getCurrentVolume()
@@ -73,6 +83,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
     }
+    
     
     @objc func statusBarButtonClicked(sender: NSStatusBarButton) {
         
@@ -89,8 +100,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
     
+    
     @objc private func showMainController() {
-        
         
         guard let button = statusItem.button else {
             fatalError("Couldn't find status item button.")
@@ -114,9 +125,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
 }
 
+
 func isKeyPresentInUserDefaults(key: String) -> Bool {
+    
     return UserDefaults.standard.object(forKey: key) != nil
+    
 }
+
 
 func dialogOKCancel(question: String, text: String) -> Bool {
     
