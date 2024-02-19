@@ -11,7 +11,8 @@ I don't use a MacBook with Touch Bar anymore. So if there are any issues with th
    - click on the little gear symbol will show the option to set a global _Keyboard Shortcut_, the option for _Autostart_ and a _Quit_ button
 
 ### install
-- download or clone the repo
+- download the toggleMute.zip form the [latest](https://github.com/satrik/toggleMute/releases/latest) release
+   - alternatively download or clone the repository
 - unpack the toggleMute.zip and move toggleMute.app into the Applications folder
 - execute (just double click) the toggleMuteDisableQuarantine.command
    - if this does not work, you have to execute `xattr -cr /Applications/toggleMute.app` in a terminal
