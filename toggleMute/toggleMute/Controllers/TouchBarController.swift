@@ -1,11 +1,11 @@
 // Author: Sascha Petrik
 
 import Cocoa
-import LaunchAtLogin
 
 fileprivate extension NSTouchBarItem.Identifier {
     static let touchBarButtonIdentifier = NSTouchBarItem.Identifier("com.foofoo.touchbarMute")
 }
+
 
 class TouchBarController {
     
@@ -15,31 +15,31 @@ class TouchBarController {
     
     let defaults = UserDefaults.standard
     var isMuted = true || false
-    var redIcon = true || false
-    
+    var redMenuBarIconBackground = true || false
+    var redMenuBarIcon = true || false
+
     let imageUnmute = NSImage(named: NSImage.touchBarAudioInputTemplateName)
     let imageMute = NSImage(named: NSImage.touchBarAudioInputMuteTemplateName)
     var touchBarButton: NSButton?
 
     
     private lazy var item: NSCustomTouchBarItem = {
+        
         let i = NSCustomTouchBarItem(identifier: .touchBarButtonIdentifier)
         return i
+        
     }()
 
 
     static func instantiate(with settingsController: SettingsController) -> TouchBarController {
+        
         let touchBarController = TouchBarController()
         touchBarController.settingsController = settingsController
         return touchBarController
+        
     }
-
-    func test() {
-        if dialogOKCancel(question: "Update available", text: "") {
-            let updateUrl = URL(string: "https://github.com/satrik/toggleMute")!
-                NSWorkspace.shared.open(updateUrl)
-        }
-    }
+    
+    
     func configureUI() {
         
         touchBarButton = NSButton(image: imageUnmute!, target: self, action: #selector(toggleMuteStateObj))
@@ -53,7 +53,7 @@ class TouchBarController {
         } else {
             isMuted = false
         }
-        
+                
         if(isMuted) {
             defaults.set(false, forKey: "isMuted")
             toggleMuteStateHard(setMute: true)
@@ -64,18 +64,19 @@ class TouchBarController {
     
     }
     
+    
     func isKeyPresentInUserDefaults(key: String) -> Bool {
         return UserDefaults.standard.object(forKey: key) != nil
     }
     
+    
     @objc func toggleMuteStateObj() {
-        
         toggleMuteState()
-
     }
     
+    
     func setNewVolume(newValue: Int) {
-
+                    
        let setInputAndResetOutputVolume =
             """
             set volume input volume \(newValue)
@@ -86,8 +87,9 @@ class TouchBarController {
         if let scriptObject = NSAppleScript(source: setInputAndResetOutputVolume) {
            scriptObject.executeAndReturnError(&error)
         }
-        
+                    
     }
+    
     
     func toggleMuteState() {
 
@@ -98,32 +100,68 @@ class TouchBarController {
         }
     }
     
+    
     func toggleMuteStateHard(setMute: Bool) {
         
         let button = delegateController.statusItem.button
         isMuted = defaults.bool(forKey: "isMuted")
-        redIcon = defaults.bool(forKey: "redMenuBarIcon")
-        
+        redMenuBarIconBackground = defaults.bool(forKey: "redMenuBarBackground")
+        redMenuBarIcon = defaults.bool(forKey: "redMenuBarIcon")
+                
         if(!setMute && isMuted){
+        
             defaults.set(false, forKey: "isMuted")
-            button?.image = imageUnmute
+            
+            button?.image = imageUnmute?.tint(color: .alternateSelectedControlTextColor)
+            
             button?.layer?.backgroundColor = CGColor(red: 0, green: 0, blue: 0 , alpha: 0)
             touchBarButton?.image = imageUnmute
             touchBarButton?.bezelColor = NSColor.clear
             var unmuteVal = 80
+            
             if(isKeyPresentInUserDefaults(key: "defaultInputVol")){
                 unmuteVal = defaults.integer(forKey: "defaultInputVol")
             }
+            
             setNewVolume(newValue: unmuteVal)
+            
         } else if(setMute && !isMuted) {
+            
             defaults.set(true, forKey: "isMuted")
-            button?.image = imageMute
-            if(redIcon){
-                button?.layer?.backgroundColor = CGColor(red: 0.75, green: 0, blue: 0 , alpha: 0.75)
-            }
+                    
+            button?.image = imageMute?.tint(color: .selectedMenuItemTextColor)
+            button?.layer?.backgroundColor = CGColor(red: 0, green: 0, blue: 0 , alpha: 0)
+            
             touchBarButton?.image = imageMute
             touchBarButton?.bezelColor = NSColor.red
             setNewVolume(newValue: 0)
+            
+            if(redMenuBarIcon){
+                button?.image = imageMute?.tint(color: .red)
+            }
+            
+            if(redMenuBarIconBackground){
+                button?.layer?.backgroundColor = CGColor(red: 1.0, green: 0, blue: 0 , alpha: 1.0)
+            }
+            
         }
+        
     }
+    
+}
+
+
+extension NSImage {
+    
+    func tint(color: NSColor) -> NSImage {
+    
+        return NSImage(size: size, flipped: false) { (rect) -> Bool in
+            color.set()
+            rect.fill()
+            self.draw(in: rect, from: NSRect(origin: .zero, size: self.size), operation: .destinationIn, fraction: 1.0)
+            return true
+        }
+        
+    }
+    
 }

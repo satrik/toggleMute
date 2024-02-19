@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="19455" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="22505" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19455"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22505"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -26,11 +26,11 @@
             <objects>
                 <viewController storyboardIdentifier="SettingsController" id="aIO-ci-xyZ" customClass="SettingsViewController" customModule="toggleMute" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="GQP-k5-Kfj">
-                        <rect key="frame" x="0.0" y="0.0" width="175" height="182"/>
+                        <rect key="frame" x="0.0" y="0.0" width="170" height="258"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="09C-uc-Vc0">
-                                <rect key="frame" x="18" y="52" width="119" height="18"/>
+                                <rect key="frame" x="18" y="87" width="119" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="check" title="Launch at login" bezelStyle="regularSquare" imagePosition="left" inset="2" id="6xX-4F-EZv">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -41,9 +41,9 @@
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="T0j-LS-G9b">
-                                <rect key="frame" x="18" y="78" width="141" height="18"/>
+                                <rect key="frame" x="18" y="142" width="52" height="20"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <buttonCell key="cell" type="check" title="Red Menubar Mute" bezelStyle="regularSquare" imagePosition="left" inset="2" id="ZwO-CH-Rfw">
+                                <buttonCell key="cell" type="check" title="Icon" bezelStyle="regularSquare" imagePosition="left" inset="2" id="ZwO-CH-Rfw">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
@@ -51,8 +51,41 @@
                                     <action selector="didTouchRedMenuBarIcon:" target="aIO-ci-xyZ" id="V0B-HI-n1Z"/>
                                 </connections>
                             </button>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="A66-Qf-44f">
+                                <rect key="frame" x="18" y="120" width="99" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="check" title="Background" bezelStyle="regularSquare" imagePosition="left" inset="2" id="FF6-0H-k9n">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="didTouchRedMenuBarIcon:" target="aIO-ci-xyZ" id="Sea-Ra-3aj"/>
+                                </connections>
+                            </button>
+                            <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="soj-dc-sHL" userLabel="ShortCutInput">
+                                <rect key="frame" x="20" y="196" width="130" height="24"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            </customView>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MJg-6Y-ReN">
+                                <rect key="frame" x="25" y="228" width="118" height="16"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Keyboard Shortcut" id="VpL-F4-C9d">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="x7T-lh-nLC">
+                                <rect key="frame" x="18" y="165" width="89" height="16"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Red Menubar:" id="DEQ-ir-kkm">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="J5i-rV-IWc">
-                                <rect key="frame" x="18" y="19" width="139" height="19"/>
+                                <rect key="frame" x="20" y="52" width="130" height="19"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="roundRect" title="Quit" bezelStyle="roundedRect" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" id="DYw-NE-oge">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -62,32 +95,54 @@
                                     <action selector="didTouchClose:" target="aIO-ci-xyZ" id="yL3-Pn-Mxe"/>
                                 </connections>
                             </button>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MJg-6Y-ReN">
-                                <rect key="frame" x="28" y="146" width="118" height="16"/>
+                            <box verticalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="w9j-5S-ZZS">
+                                <rect key="frame" x="12" y="187" width="147" height="5"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" title="Keyboard Shortcut" id="VpL-F4-C9d">
-                                    <font key="font" metaFont="system"/>
+                            </box>
+                            <box verticalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="gWj-lX-r5E">
+                                <rect key="frame" x="12" y="110" width="147" height="5"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            </box>
+                            <box verticalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="sYR-6q-5LN">
+                                <rect key="frame" x="12" y="42" width="147" height="5"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            </box>
+                            <box verticalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="ldF-az-ThK">
+                                <rect key="frame" x="12" y="77" width="147" height="5"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            </box>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Tqi-fB-Duh">
+                                <rect key="frame" x="18" y="6" width="133" height="14"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" lineBreakMode="truncatingTail" alignment="left" title="Made with ❤️ by satrik " id="yln-HX-JWY">
+                                    <font key="font" metaFont="smallSystem"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="soj-dc-sHL" userLabel="ShortCutInput">
-                                <rect key="frame" x="20" y="107" width="135" height="28"/>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Nm3-UQ-zh5">
+                                <rect key="frame" x="20" y="20" width="128" height="16"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            </customView>
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Version: -" id="dDA-KH-251">
+                                    <font key="font" metaFont="smallSystem"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                     </view>
                     <connections>
                         <outlet property="launchAtLoginCheckBox" destination="09C-uc-Vc0" id="26M-gn-LQB"/>
                         <outlet property="quitButton" destination="J5i-rV-IWc" id="FAg-qz-Z3W"/>
-                        <outlet property="redMenuBarCheckBox" destination="T0j-LS-G9b" id="9Qm-Wr-VEe"/>
+                        <outlet property="redMenuBarBackgroundCheckBox" destination="A66-Qf-44f" id="Lp5-Gg-ejx"/>
+                        <outlet property="redMenuBarIconCheckBox" destination="T0j-LS-G9b" id="Q9e-U6-5NJ"/>
                         <outlet property="shortcutSubView" destination="soj-dc-sHL" id="sB1-e0-1DG"/>
-                        <outlet property="test" destination="soj-dc-sHL" id="B2e-Ie-jC8"/>
+                        <outlet property="versionLabel" destination="Nm3-UQ-zh5" id="bLz-jc-io9"/>
                     </connections>
                 </viewController>
                 <customObject id="jy5-cl-vqi" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-69.5" y="150"/>
+            <point key="canvasLocation" x="-105" y="204"/>
         </scene>
         <!--Main Controller-->
         <scene sceneID="hNI-qx-ODP">
@@ -160,7 +215,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="gear" catalog="system" width="17" height="17"/>
+        <image name="gear" catalog="system" width="17" height="16"/>
         <image name="safari" catalog="system" width="15" height="15"/>
     </resources>
 </document>
