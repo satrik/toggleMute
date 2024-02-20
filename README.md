@@ -14,7 +14,7 @@ I don't use a MacBook with Touch Bar anymore. So if there are any issues with th
 - download the toggleMute.zip form the [latest](https://github.com/satrik/toggleMute/releases/latest) release
    - alternatively download or clone the repository
 - unpack the toggleMute.zip and move toggleMute.app into the Applications folder
-- execute (just double click) the toggleMuteDisableQuarantine.command
+- execute (just double click) the `toggleMuteDisableQuarantine.command`
    - if this does not work, you have to execute `xattr -cr /Applications/toggleMute.app` in a terminal
 - start the App the first time via right click > open and "Trust me" :wink:
 - the Touch Bar button is only visible in the "control strip" and can't be moved to any other place
