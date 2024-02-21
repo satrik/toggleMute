@@ -12,7 +12,7 @@ I don't use a MacBook with Touch Bar anymore. So if there are any issues with th
 
 ### install
 
-#### Homebrew tap
+#### homebrew tap
 
 ```shell
 brew tap satrik/toggleMute
@@ -24,7 +24,7 @@ As this application is not signed you have to do some manual steps:
 - right-click `toggleMute.app` and select `open`
 - allow the security exception
 
-#### Manually
+#### manually
 
 - download the toggleMute.zip form the [latest](https://github.com/satrik/toggleMute/releases/latest) release
    - alternatively download or clone the repository
