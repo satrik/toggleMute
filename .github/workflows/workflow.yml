@@ -1,0 +1,72 @@
+name: create release and bump cask version
+
+on:
+  workflow_dispatch:
+
+jobs:
+  buildNewAppRelease:
+    runs-on: macos-14
+    steps:
+
+      - uses: maxim-lobanov/setup-xcode@v1.6.0
+        with:
+          xcode-version: latest-stable
+
+      - name: checkout toggleMute
+        uses: actions/checkout@v4
+
+      - name: get new version
+        id: get-new-version
+        run: echo "NEW_VERSION=$(cat toggleMute/toggleMute.xcodeproj/project.pbxproj | grep -m1 'MARKETING_VERSION' | cut -d'=' -f2 | tr -d ';' | tr -d ' ')" >> $GITHUB_OUTPUT
+
+      - name: set default scheme
+        run: |
+          cd toggleMute
+          scheme_list=$(xcodebuild -list -json | tr -d "\n")
+          default=$(echo $scheme_list | ruby -e "require 'json'; puts JSON.parse(STDIN.gets)['project']['targets'][0]")
+          echo $default | cat >default
+          echo Using default scheme: $default
+
+      - name: build app archive
+        id: build-app-archive
+        env:
+          scheme: ${{ 'default' }}
+        run: |
+          cd toggleMute
+          if [ $scheme = default ]; then scheme=$(cat default); fi
+          if [ "`ls -A | grep -i \\.xcworkspace\$`" ]; then filetype_parameter="workspace" && file_to_build="`ls -A | grep -i \\.xcworkspace\$`"; else filetype_parameter="project" && file_to_build="`ls -A | grep -i \\.xcodeproj\$`"; fi
+          file_to_build=`echo $file_to_build | awk '{$1=$1;print}'`
+          xcodebuild clean build analyze -scheme "$scheme" -"$filetype_parameter" "$file_to_build" | xcpretty
+          if [ "${PIPESTATUS[0]}" -ne 0 ] ; then exit ${PIPESTATUS[0]} ; fi
+          xcodebuild archive -scheme "$scheme" -archivePath App.xcarchive
+          hdiutil create -volname "toggleMute" -srcfolder "App.xcarchive/Products/Applications/toggleMute.app" -ov -format UDZO "../toggleMute.dmg"
+          echo "DMG_CHECKSUM=$(shasum -a 256 -b "../toggleMute.dmg" | awk '{print $1 }')" >> $GITHUB_OUTPUT
+
+      - name: create new release and tag
+        uses: ncipollo/release-action@v1.14.0
+        with:
+          artifacts: "toggleMute.dmg"
+          body: "SHA256sum: ${{ steps.build-app-archive.outputs.DMG_CHECKSUM}}"
+          name: ${{ steps.get-new-version.outputs.NEW_VERSION }}
+          tag: ${{ steps.get-new-version.outputs.NEW_VERSION }}
+
+      - name: checkout homebrew-togglemute
+        uses: actions/checkout@v4
+        with:
+          repository: 'satrik/homebrew-togglemute'
+          token: ${{ secrets.CASK_REPO_TOKEN }}
+
+      - name: bump version and update hash
+        run: |
+          sed -i '' 's/^  version .*/  version "${{ steps.get-new-version.outputs.NEW_VERSION }}"/' ${{ github.workspace }}/Casks/togglemute.rb
+          sed -i '' 's/^  sha256 .*/  sha256 "${{ steps.build-app-archive.outputs.DMG_CHECKSUM}}"/' ${{ github.workspace }}/Casks/togglemute.rb
+
+      - name: create pull request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.CASK_REPO_TOKEN }}
+          commit-message: Update version of homebrew cask
+          delete-branch: true
+          title: 'Update version'
+          labels: update
+          draft: false
