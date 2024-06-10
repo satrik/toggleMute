@@ -11,6 +11,16 @@ I don't use a MacBook with Touch Bar anymore. So if there are any issues with th
    - click on the little gear symbol will show the option to set a global _Keyboard Shortcut_, the option for _Autostart_ and a _Quit_ button
 
 ### install
+
+#### homebrew tap
+
+```shell
+brew tap satrik/togglemute
+brew install --no-quarantine togglemute
+```
+
+#### manually
+
 - download the toggleMute.zip form the [latest](https://github.com/satrik/toggleMute/releases/latest) release
    - alternatively download or clone the repository
 - unpack the toggleMute.zip and move toggleMute.app into the Applications folder
@@ -19,7 +29,7 @@ I don't use a MacBook with Touch Bar anymore. So if there are any issues with th
 - start the App the first time via right click > open and "Trust me" :wink:
 - the Touch Bar button is only visible in the "control strip" and can't be moved to any other place
 
-App Preview:
+### app preview:
 
 ![app_prev](/img/app_prev.png)
 
