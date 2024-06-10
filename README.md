@@ -15,14 +15,9 @@ I don't use a MacBook with Touch Bar anymore. So if there are any issues with th
 #### homebrew tap
 
 ```shell
-brew tap satrik/toggleMute
-brew install togglemute
+brew tap satrik/togglemute
+brew install --no-quarantine togglemute
 ```
-
-As this application is not signed you have to do some manual steps:
-- open `/Applications` in finder
-- right-click `toggleMute.app` and select `open`
-- allow the security exception
 
 #### manually
 
@@ -34,7 +29,7 @@ As this application is not signed you have to do some manual steps:
 - start the App the first time via right click > open and "Trust me" :wink:
 - the Touch Bar button is only visible in the "control strip" and can't be moved to any other place
 
-App Preview:
+### app preview:
 
 ![app_prev](/img/app_prev.png)
 
