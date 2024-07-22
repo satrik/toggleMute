@@ -27,7 +27,8 @@ brew install --no-quarantine togglemute
 - execute (just double click) the `toggleMuteDisableQuarantine.command`
    - if this does not work, you have to execute `xattr -cr /Applications/toggleMute.app` in a terminal
 - start the App the first time via right click > open and "Trust me" :wink:
-- the Touch Bar button is only visible in the "control strip" and can't be moved to any other place
+- the Touch Bar button is only visible in the normal "control strip" (not the extended) and can't be moved to any other place
+   - so you have to choose for example "Quick Actions" and activate "Show Control Stip"
 
 ### app preview:
 
