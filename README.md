@@ -1,10 +1,12 @@
 ## toggleMute
 
-### note 
-I don't use a MacBook with Touch Bar anymore. So if there are any issues with the Touch Bar, I can't help/debug by myself
+> This App only mutes/unmutes the default selected audio input device of your Mac. If you use an external device you have to set it as the default audio device in the macOS system settings to make it work with this App.
+
+> [!NOTE]
+> I don't use a MacBook with Touch Bar anymore. So if there are any issues with the Touch Bar, then I won't notice it. So please open an issue if there are any problems.
 
 ### functions
-- Single tab/click on the Touch Bar or the Menubar icon will toggle between mute and unmute.
+- Single tab/click on the Touch Bar or the Menubar icon will toggle between mute and unmute
 - Right click on the Menubar icon will show the setting for the default unmute volume. 
    - this volume will _always_ be set if you unmute
    - if you change the input volume via the system settings, the app will overwrite it
