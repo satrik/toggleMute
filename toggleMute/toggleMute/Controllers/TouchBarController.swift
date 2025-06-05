@@ -3,7 +3,7 @@
 import Cocoa
 
 fileprivate extension NSTouchBarItem.Identifier {
-    static let touchBarButtonIdentifier = NSTouchBarItem.Identifier("com.foofoo.touchbarMute")
+    static let touchBarButtonIdentifier = NSTouchBarItem.Identifier("com.touchbar.toggleMute")
 }
 
 
@@ -12,12 +12,10 @@ class TouchBarController {
     private var settingsController: SettingsController!
     private var delegateController = NSApplication.shared.delegate as! AppDelegate
     
-    
     let defaults = UserDefaults.standard
     var isMuted = true || false
     var redMenuBarIconBackground = true || false
     var redMenuBarIcon = true || false
-
     let imageUnmute = NSImage(named: NSImage.touchBarAudioInputTemplateName)
     let imageMute = NSImage(named: NSImage.touchBarAudioInputMuteTemplateName)
     var touchBarButton: NSButton?
@@ -25,8 +23,8 @@ class TouchBarController {
     
     private lazy var item: NSCustomTouchBarItem = {
         
-        let i = NSCustomTouchBarItem(identifier: .touchBarButtonIdentifier)
-        return i
+        let touchbarButtonItem = NSCustomTouchBarItem(identifier: .touchBarButtonIdentifier)
+        return touchbarButtonItem
         
     }()
 
@@ -90,7 +88,7 @@ class TouchBarController {
                     
     }
     
-    
+
     func toggleMuteState() {
 
         if(touchBarButton?.image == imageMute){

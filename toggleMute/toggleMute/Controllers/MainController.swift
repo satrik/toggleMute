@@ -1,8 +1,9 @@
 // Author: Sascha Petrik
 
 import Cocoa
+import UserNotifications
 
-class MainController: NSViewController {
+class MainController: NSViewController, UNUserNotificationCenterDelegate {
 
     @IBOutlet weak var settingsButton: NSButton!
     @IBOutlet weak var openGithubButton: NSButton!
@@ -12,12 +13,14 @@ class MainController: NSViewController {
     private var settingsController: SettingsController!
     private var preferences: Preferences!
     private lazy var touchBarController = TouchBarController()
+    private var delegateController = NSApplication.shared.delegate as! AppDelegate
 
+    let popoverSettingsView = NSPopover()
+    
     let repoUrl = URL(string: "https://github.com/satrik/toggleMute")!
     let defaults = UserDefaults.standard
     var currentSetVolume = 0
-    
-    
+        
     static func instantiate(with settingsController: SettingsController, and preferences: Preferences) -> MainController {
         
         let storyboard = NSStoryboard(name: "Controllers", bundle: nil)
@@ -41,10 +44,10 @@ class MainController: NSViewController {
    
     
     override func viewDidLoad() {
-    
+
         super.viewDidLoad()
         setupNotifications()
-        
+                
         if(isKeyPresentInUserDefaults(key: "defaultInputVol")) {
             inputValueSlider.integerValue = defaults.integer(forKey: "defaultInputVol")
         }
@@ -55,26 +58,16 @@ class MainController: NSViewController {
         
         getCurrentVolume()
         
-        let firstStart = defaults.bool(forKey: "firstStart")
-        let updateAvailable = defaults.bool(forKey: "updateAvailable")
-        
-        if  firstStart && updateAvailable {
-            if dialogOKCancel(question: "Update available", text: "You can download the new version at github") {
-                if NSWorkspace.shared.open(repoUrl) {}
-            }
-        }
-
-        defaults.set(false, forKey: "firstStart")
-
     }
-
     
+    
+    // no user notifications
     private func setupNotifications() {
         
         NotificationCenter.default.addObserver(self, selector: #selector(preferencesDidChange), name: Preferences.didChangeNotification, object: nil)
         
     }
-
+    
     
     @objc private func preferencesDidChange() {
         // nothing to do currently
@@ -132,12 +125,12 @@ class MainController: NSViewController {
     
     @IBAction func didTouchSettings(_ sender: Any) {
         
-        let settingsController = SettingsViewController.instantiate(with: preferences)
-        let popoverView = NSPopover()
-        popoverView.contentViewController = settingsController
-        popoverView.behavior = .transient
-        popoverView.show(relativeTo: settingsButton.bounds, of: settingsButton, preferredEdge: .maxY)
         
+        let settingsController = SettingsViewController.instantiate(with: preferences)
+        popoverSettingsView.contentViewController = settingsController
+        popoverSettingsView.behavior = .transient
+        popoverSettingsView.show(relativeTo: settingsButton.bounds, of: settingsButton, preferredEdge: .maxY)
+        delegateController.eventMonitor2?.start()
     }
     
     
@@ -148,4 +141,25 @@ class MainController: NSViewController {
     }
     
     
+}
+
+
+
+extension MainController {
+  
+  static func createController() -> MainController {
+  
+    let storyboard = NSStoryboard(name: "Controllers", bundle: nil)
+    let identifier = "MainController"
+    
+    guard let viewcontroller = storyboard.instantiateController(withIdentifier: identifier) as? MainController else {
+      
+      fatalError("Why cant i find MainController? - Check Controllers.storyboard")
+      
+    }
+    
+    return viewcontroller
+    
+  }
+  
 }

@@ -44,6 +44,7 @@ class SettingsViewController: NSViewController {
 
     
     override func viewDidLoad() {
+        
         super.viewDidLoad()
         
         if(isKeyPresentInUserDefaults(key: "stringLocalVersion")) {
@@ -72,7 +73,7 @@ class SettingsViewController: NSViewController {
         recorder.heightAnchor.constraint(greaterThanOrEqualToConstant: 24).isActive = true
         
         shortcutSubView.addSubview(recorder)
-                
+        
     }
     
     
@@ -109,8 +110,6 @@ class SettingsViewController: NSViewController {
                     button?.image = touchBarController.imageMute?.tint(color: .selectedMenuItemTextColor)
                 }
             }
-
-            
             
         } else if (sender.title == "Background") {
             

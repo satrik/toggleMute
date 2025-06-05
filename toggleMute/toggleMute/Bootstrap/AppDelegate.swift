@@ -3,46 +3,138 @@
 import Cocoa
 import LaunchAtLogin
 import KeyboardShortcuts
+import UserNotifications
 
 @NSApplicationMain
-class AppDelegate: NSObject, NSApplicationDelegate {
+class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDelegate {
+    
+    let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
 
-    let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
-        
     private lazy var preferences = Preferences()
     private lazy var settingsController = SettingsController()
     private lazy var mainController = MainController()
     private lazy var touchBarController = TouchBarController.instantiate(with: settingsController)
-    private weak var popoverView: NSPopover?
+    let popoverView = NSPopover()
+    var eventMonitor: EventMonitor?
+    var eventMonitor2: EventMonitor?
     var refreshTimer: Timer?
     let defaults = UserDefaults.standard
-
     let imageUnmute = NSImage(named: NSImage.touchBarAudioInputTemplateName)
     let imageMute = NSImage(named: NSImage.touchBarAudioInputMuteTemplateName)
 
     
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.banner, .list, .badge, .sound])
+    }
+
+
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        
+        // click on notifiaction button
+        // "showUpdate" because we set this as custom identifier
+        // click on notification
+        // "com.apple.UNNotificationDefaultActionIdentifier"
+        // click on x to dismiss notification
+        // "com.apple.UNNotificationDismissActionIdentifier"
+        
+        if (response.actionIdentifier == "showUpdate" && response.notification.request.content.categoryIdentifier == "updateAvailable") {
+            if NSWorkspace.shared.open(mainController.repoUrl) {}
+        }
+        
+        completionHandler()
+        
+    }
+        
+    
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-                
+        
+        imageUnmute?.size.height = 18.0
+        imageUnmute?.size.width = 15.0
+        imageMute?.size.height = 18.0
+        imageMute?.size.width = 15.0
         LaunchAtLogin.migrateIfNeeded()
         
         refreshTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(runTimedCode), userInfo: nil, repeats: true)
         
+        UNUserNotificationCenter.current().delegate = self
+        
+        let current = UNUserNotificationCenter.current()
+        
+        current.getNotificationSettings(completionHandler: { (settings) in
+        
+            if settings.authorizationStatus == .notDetermined {
+            
+                // notifications not granted yet, asking user
+                current.requestAuthorization(options: [.alert, .sound]){ (granted, error) in
+                
+                    guard error == nil && granted else {
+                        // user denied permissions or an error occured
+                        return
+                    }
+                    // user granted permissions
+                    self.checkForUpdates()
+                }
+                
+            } else if settings.authorizationStatus == .denied {
+                // notification permission was previously denied
+                // could show a hint inside the popover now
+            } else if settings.authorizationStatus == .authorized {
+                // notification permission was already granted
+                self.checkForUpdates()
+            }
+            
+        })
+        
         if let button = self.statusItem.button {
+            
             button.image = touchBarController.imageUnmute?.tint(color: .selectedMenuItemTextColor)
             button.imageScaling = .scaleProportionallyDown
             button.target = self
             button.action = #selector(statusBarButtonClicked)
             button.sendAction(on: [.leftMouseUp, .rightMouseUp])
+
+        }
+        
+        popoverView.contentViewController = MainController.createController()
+        popoverView.setValue(true, forKeyPath: "shouldHideAnchor")
+        popoverView.behavior = .transient
+
+        eventMonitor = EventMonitor(mask: [.leftMouseDown, .rightMouseDown]) { [weak self] event in
+          
+            if let strongSelf = self, (strongSelf.popoverView.isShown) {
+                strongSelf.popoverView.performClose((Any).self)
+                strongSelf.eventMonitor?.stop()
+            }
+          
+        }
+        
+        eventMonitor2 = EventMonitor(mask: [.leftMouseDown, .rightMouseDown]) { [weak self] event in
+          
+            if let strongSelf = self, (strongSelf.popoverView.isShown) {
+                strongSelf.mainController.popoverSettingsView.close()
+                strongSelf.eventMonitor2?.stop()
+                
+                strongSelf.popoverView.close()
+                strongSelf.eventMonitor?.stop()
+            }
+          
         }
         
         touchBarController.configureUI()
         
         KeyboardShortcuts.onKeyDown(for: .toggleMuteShortcut) {
             self.touchBarController.toggleMuteState()
+            print("start")
         }
         
-        defaults.set(false, forKey: "updateAvailable")
-        defaults.set(true, forKey: "firstStart")
+        KeyboardShortcuts.onKeyUp(for: .toggleMuteShortcut) {
+            print("stop")
+        }
+        
+    }
+    
+    
+    func checkForUpdates() {
         
         let getlocalVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
         let stringLocalVersion = getlocalVersion! as NSString
@@ -60,9 +152,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let secondIndex = ";"
             let stringVersion = getString.slice(from: firstIndex, to: secondIndex)
             let githubVersion = Double(stringVersion!)!
-            
+
             if githubVersion > localVersion {
-                self.defaults.set(true, forKey: "updateAvailable")
+                self.sendNotification()
             }
             
         }
@@ -70,7 +162,39 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         task.resume()
         
     }
-
+    
+    
+    func sendNotification() {
+        
+        let checkInstallMethod = try? safeShell("brew list togglemute > /dev/null")
+        
+        var msgBody = "Just download the latest release"
+        let btnTitle = "Go to github"
+        
+        if (checkInstallMethod == "") {
+            msgBody = "Just run \"brew update && brew upgrade togglemute\" in your terminal to update"
+        }
+        
+        let content = UNMutableNotificationContent()
+        content.title = "toggleMute update available 🚀"
+        content.body = msgBody
+        content.sound = .default
+        content.categoryIdentifier = "updateAvailable"
+        
+        let uuidString = UUID().uuidString
+        let trigger = UNTimeIntervalNotificationTrigger.init(timeInterval: 3.0, repeats: false)
+        let showUpdate = UNNotificationAction(identifier: "showUpdate", title: btnTitle, options: .foreground)
+        let category = UNNotificationCategory(identifier: "updateAvailable", actions: [showUpdate], intentIdentifiers: [], options: .customDismissAction)
+        let notificationCenter = UNUserNotificationCenter.current()
+        
+        notificationCenter.setNotificationCategories([category])
+        notificationCenter.requestAuthorization(options: [.alert, .sound]) { _, _ in }
+        
+        let request = UNNotificationRequest(identifier: uuidString, content: content, trigger: trigger)
+        notificationCenter.add(request)
+        
+    }
+    
     
     @objc func runTimedCode(){
 
@@ -90,39 +214,65 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let event = NSApp.currentEvent!
         
         if event.type == NSEvent.EventType.rightMouseUp {
-        
             showMainController()
-        
         } else {
-        
             touchBarController.toggleMuteState()
-            
         }
     }
     
     
     @objc private func showMainController() {
         
+        let mainController = MainController.instantiate(with: settingsController, and: preferences)
+        popoverView.contentViewController = mainController
+
         guard let button = statusItem.button else {
             fatalError("Couldn't find status item button.")
         }
+        
+        print(popoverView.isShown)
+        
+        if(popoverView.isShown) {
+            
+            popoverView.close()
+            eventMonitor?.stop()
+            
+        } else {
+            
+            popoverView.show(relativeTo: button.bounds.offsetBy(dx: 0, dy: -6), of: button, preferredEdge: NSRectEdge.minY)
+            popoverView.contentViewController?.view.window?.becomeKey()
+            
+            eventMonitor?.start()
+            NSApp.activate(ignoringOtherApps: true)
 
-        guard popoverView == nil else {
-            popoverView?.close()
-            return
         }
 
-        let mainController = MainController.instantiate(with: settingsController, and: preferences)
+    }
+    
+    
+    // Add to suppress warnings when you don't want/need a result
+    @discardableResult
+    func safeShell(_ command: String) throws -> String {
+        
+        let task = Process()
+        let pipe = Pipe()
+        
+        task.standardOutput = pipe
+        task.standardError = pipe
+        task.arguments = ["--login", "-c", command]
+        task.executableURL = URL(fileURLWithPath: "/bin/bash")
+        task.standardInput = nil
 
-        let popoverView = NSPopover()
-        popoverView.contentViewController = mainController
-        popoverView.behavior = .transient
-        popoverView.show(relativeTo: button.bounds, of: button, preferredEdge: .maxY)
-        self.popoverView = popoverView
-
-        NSApp.activate(ignoringOtherApps: true)
+        try task.run()
+        
+        let data = pipe.fileHandleForReading.readDataToEndOfFile()
+        let output = String(data: data, encoding: .utf8)!
+        
+        return output
+        
     }
 
+    
 }
 
 
@@ -132,18 +282,6 @@ func isKeyPresentInUserDefaults(key: String) -> Bool {
     
 }
 
-
-func dialogOKCancel(question: String, text: String) -> Bool {
-    
-    let alert = NSAlert()
-    alert.messageText = question
-    alert.informativeText = text
-    alert.alertStyle = .warning
-    alert.addButton(withTitle: "Open github")
-    alert.addButton(withTitle: "Cancel")
-    return alert.runModal() == .alertFirstButtonReturn
-
-}
 
 extension String {
     
