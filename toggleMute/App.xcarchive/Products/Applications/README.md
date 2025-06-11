@@ -23,9 +23,9 @@ brew install --no-quarantine togglemute
 
 #### manually
 
-- download the toggleMute.zip form the [latest](https://github.com/satrik/toggleMute/releases/latest) release
+- download the toggleMute.dmg form the [latest](https://github.com/satrik/toggleMute/releases/latest) release
    - alternatively download or clone the repository
-- unpack the toggleMute.zip and move toggleMute.app into the Applications folder
+- mount the toggleMute.dmg and move toggleMute.app into the Applications folder
 - execute (just double click) the `toggleMuteDisableQuarantine.command`
    - if this does not work, you have to execute `xattr -cr /Applications/toggleMute.app` in a terminal
 - start the App the first time via right click > open and "Trust me" :wink:
@@ -34,12 +34,12 @@ brew install --no-quarantine togglemute
 
 ### app preview:
 
-![app_prev](/img/app_prev.png)
+![app_prev](img/app_prev.png)
 
 Touch Bar Preview:
 
-![touchbar_prev](/img/touchbar_prev.png)
+![touchbar_prev](img/touchbar_prev.png)
 
 Menubar Preview:
 
-![menubar_prev](/img/menubar_prev.png)
+![menubar_prev](img/menubar_prev.png)
