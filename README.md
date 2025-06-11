@@ -34,12 +34,12 @@ brew install --no-quarantine togglemute
 
 ### app preview:
 
-![app_prev](/img/app_prev.png)
+![app_prev](img/app_prev.png)
 
 Touch Bar Preview:
 
-![touchbar_prev](/img/touchbar_prev.png)
+![touchbar_prev](img/touchbar_prev.png)
 
 Menubar Preview:
 
-![menubar_prev](/img/menubar_prev.png)
+![menubar_prev](img/menubar_prev.png)
