@@ -13,19 +13,11 @@
    - click on the little gear symbol will show the option to set a global _Keyboard Shortcut_, the option for _Autostart_ and a _Quit_ button
 
 ### install
-
 #### homebrew tap
 
 ```shell
 brew tap satrik/togglemute
 brew install --no-quarantine togglemute
-```
-
-### update
-
-```shell
-brew update
-brew updgrade --no-quarantine
 ```
 
 #### manually
@@ -38,6 +30,17 @@ brew updgrade --no-quarantine
 - start the App the first time via right click > open and "Trust me" :wink:
 - the Touch Bar button is only visible in the normal "control strip" (not the extended) and can't be moved to any other place
    - so you have to choose for example "Quick Actions" and activate "Show Control Stip"
+
+### update
+#### homebrew
+
+```shell
+brew update
+brew updgrade --no-quarantine
+```
+
+#### manually 
+Repeat the steps from the manually install section and replace the old app
 
 ### app preview:
 
