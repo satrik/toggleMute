@@ -21,6 +21,13 @@ brew tap satrik/togglemute
 brew install --no-quarantine togglemute
 ```
 
+### update
+
+```shell
+brew update
+brew updgrade --no-quarantine
+```
+
 #### manually
 
 - download the toggleMute.dmg form the [latest](https://github.com/satrik/toggleMute/releases/latest) release
