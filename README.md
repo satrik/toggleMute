@@ -1,48 +1,59 @@
-## toggleMute
+<p align="center">
+   <img src="toggleMute_icon.png" width="180"/>
+   <br>
+   <span style="font-size:1.5rem;font-weight:600;">toggleMute</span>
+   <br>
+   <span>macOS Touch Bar and Menu Bar App to mute/unmute the default microphone</span>
+   <br><br>
+   <img alt="GitHub Release" src="https://img.shields.io/github/v/release/satrik/toggleMute?style=flat&color=brightgreen">
+   <img src="https://img.shields.io/badge/license-MIT-blue?style=flat" alt="License">
+   <img alt="GitHub top language" src="https://img.shields.io/github/languages/top/satrik/togglemute?logo=swift&color=red">
+   <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/satrik/toggleMute?style=flat&logo=Github">
+</p>
 
-> This App only mutes/unmutes the default selected audio input device of your Mac. If you use an external device you have to set it as the default audio device in the macOS system settings to make it work with this App.
+> [!Important]  
+> This app only mutes or unmutes the currently selected **default audio input device** on your Mac.  
+> If you use an external device, you must set it as the default input device in **System Settings → Sound** for this app to work.
 
-> [!NOTE]
-> I don't use a MacBook with Touch Bar anymore. So if there are any issues with the Touch Bar, then I won't notice it. Please open an issue if there are any problems.
+## Functions
+- A single tap or click on the Touch Bar or Menu Bar icon toggles between mute and unmute.  
+- Right-clicking the Menu Bar icon opens settings for the default unmute volume.  
+   - This volume will *always* be applied when unmuting.  
+   - If you change the input volume via System Settings, the app will overwrite it.  
+   - Clicking the gear icon opens additional options for a global *keyboard shortcut*, *autostart*, and a *quit* button.
 
-### functions
-- Single tab/click on the Touch Bar or the Menubar icon will toggle between mute and unmute
-- Right click on the Menubar icon will show the setting for the default unmute volume. 
-   - this volume will _always_ be set if you unmute
-   - if you change the input volume via the system settings, the app will overwrite it
-   - click on the little gear symbol will show the option to set a global _Keyboard Shortcut_, the option for _Autostart_ and a _Quit_ button
+## Installation
 
-### install
-#### homebrew tap
+### Homebrew
 
 ```shell
 brew tap satrik/togglemute
 brew install --no-quarantine togglemute
 ```
 
-#### manually
+## Manual Installation
 
-- download the toggleMute.dmg form the [latest](https://github.com/satrik/toggleMute/releases/latest) release
-   - alternatively download or clone the repository
-- mount the toggleMute.dmg and move toggleMute.app into the Applications folder
-- execute (just double click) the `toggleMuteDisableQuarantine.command`
-   - if this does not work, you have to execute `xattr -cr /Applications/toggleMute.app` in a terminal
-- start the App the first time via right click > open and "Trust me" :wink:
-- the Touch Bar button is only visible in the normal "control strip" (not the extended) and can't be moved to any other place
-   - so you have to choose for example "Quick Actions" and activate "Show Control Stip"
+- Download the toggleMute.dmg file from the latest release.
+   - Alternatively, you can clone or download the repository.
+- Mount toggleMute.dmg and move toggleMute.app to your Applications folder.
+- Run (double-click) toggleMuteDisableQuarantine.command.
+   - If this doesn’t work, execute xattr -cr /Applications/toggleMute.app in the Terminal.
+- Launch the app for the first time via Right-click → Open and select Trust me 😉
+- The Touch Bar button is only visible in the regular “Control Strip” (not the extended version) and cannot be moved elsewhere.
+   - To enable it, choose Quick Actions and activate Show Control Strip.
 
-### update
-#### homebrew
+## Update
+### Homebrew
 
 ```shell
 brew update
 brew updgrade --no-quarantine
 ```
 
-#### manually 
+### Manually 
 Repeat the steps from the manually install section and replace the old app
 
-### app preview:
+## Preview:
 
 ![app_prev](img/app_prev.png)
 
