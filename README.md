@@ -1,7 +1,7 @@
 <p align="center">
    <img src="toggleMute_icon.png" width="180"/>
    <br>
-   <span style="font-size:1.5rem;font-weight:600;">toggleMute</span>
+   <span style="font-size:2rem;font-weight:600;">toggleMute</span>
    <br>
    <span>macOS Touch Bar and Menu Bar App to mute/unmute the default microphone</span>
    <br><br>
