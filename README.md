@@ -1,8 +1,10 @@
 <p align="center">
    <img src="toggleMute_icon.png" width="180"/>
-   <br>
-   <span style="font-size:2rem;font-weight:600;">toggleMute</span>
-   <br>
+</p>   
+<h1 align="center">
+   toggleMute
+</h1>
+<p align="center"> 
    <span>macOS Touch Bar and Menu Bar App to mute/unmute the default microphone</span>
    <br><br>
    <img alt="GitHub Release" src="https://img.shields.io/github/v/release/satrik/toggleMute?style=flat&color=brightgreen">
