@@ -27,11 +27,11 @@
             <objects>
                 <viewController storyboardIdentifier="SettingsController" id="aIO-ci-xyZ" customClass="SettingsViewController" customModule="toggleMute" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="GQP-k5-Kfj">
-                        <rect key="frame" x="0.0" y="0.0" width="170" height="258"/>
+                        <rect key="frame" x="0.0" y="0.0" width="170" height="308"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="09C-uc-Vc0">
-                                <rect key="frame" x="18" y="87" width="119" height="18"/>
+                                <rect key="frame" x="18" y="137" width="119" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="check" title="Launch at login" bezelStyle="regularSquare" imagePosition="left" inset="2" id="6xX-4F-EZv">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -42,7 +42,7 @@
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="T0j-LS-G9b">
-                                <rect key="frame" x="18" y="142" width="52" height="20"/>
+                                <rect key="frame" x="18" y="192" width="52" height="20"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="check" title="Icon" bezelStyle="regularSquare" imagePosition="left" inset="2" id="ZwO-CH-Rfw">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -53,7 +53,7 @@
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="A66-Qf-44f">
-                                <rect key="frame" x="18" y="120" width="99" height="18"/>
+                                <rect key="frame" x="18" y="170" width="99" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="check" title="Background" bezelStyle="regularSquare" imagePosition="left" inset="2" id="FF6-0H-k9n">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -64,11 +64,11 @@
                                 </connections>
                             </button>
                             <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="soj-dc-sHL" userLabel="ShortCutInput">
-                                <rect key="frame" x="20" y="196" width="130" height="24"/>
+                                <rect key="frame" x="20" y="246" width="130" height="24"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             </customView>
                             <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MJg-6Y-ReN">
-                                <rect key="frame" x="25" y="228" width="118" height="16"/>
+                                <rect key="frame" x="25" y="278" width="118" height="16"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Keyboard Shortcut" id="VpL-F4-C9d">
                                     <font key="font" metaFont="system"/>
@@ -77,7 +77,7 @@
                                 </textFieldCell>
                             </textField>
                             <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="x7T-lh-nLC">
-                                <rect key="frame" x="18" y="165" width="89" height="16"/>
+                                <rect key="frame" x="18" y="215" width="89" height="16"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Red Menubar:" id="DEQ-ir-kkm">
                                     <font key="font" metaFont="system"/>
@@ -97,11 +97,11 @@
                                 </connections>
                             </button>
                             <box verticalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="w9j-5S-ZZS">
-                                <rect key="frame" x="12" y="187" width="147" height="5"/>
+                                <rect key="frame" x="12" y="237" width="147" height="5"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             </box>
                             <box verticalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="gWj-lX-r5E">
-                                <rect key="frame" x="12" y="110" width="147" height="5"/>
+                                <rect key="frame" x="12" y="160" width="147" height="5"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             </box>
                             <box verticalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="sYR-6q-5LN">
@@ -109,7 +109,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             </box>
                             <box verticalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="ldF-az-ThK">
-                                <rect key="frame" x="12" y="77" width="147" height="5"/>
+                                <rect key="frame" x="12" y="127" width="147" height="5"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             </box>
                             <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Tqi-fB-Duh">
@@ -136,10 +136,36 @@
                                 <imageCell key="cell" focusRingType="none" alignment="left" imageScaling="proportionallyDown" image="heart.fill" catalog="system" id="rAY-C7-Wzq"/>
                                 <color key="contentTintColor" name="controlAccentColor" catalog="System" colorSpace="catalog"/>
                             </imageView>
+                            <!-- Sound feedback checkbox -->
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Sf1-mS-ch1">
+                                <rect key="frame" x="18" y="107" width="142" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="check" title="Play sound on mute/unmute" bezelStyle="regularSquare" imagePosition="left" inset="2" id="Sf1-mS-ch2">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="didTouchMuteSound:" target="aIO-ci-xyZ" id="Sf1-mS-ch3"/>
+                                </connections>
+                            </button>
+                            <!-- HUD overlay checkbox -->
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Hd1-oV-wd1">
+                                <rect key="frame" x="18" y="87" width="142" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="check" title="Show mute overlay" bezelStyle="regularSquare" imagePosition="left" inset="2" id="Hd1-oV-wd2">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="didTouchShowHud:" target="aIO-ci-xyZ" id="Hd1-oV-wd3"/>
+                                </connections>
+                            </button>
                         </subviews>
                     </view>
                     <connections>
                         <outlet property="launchAtLoginCheckBox" destination="09C-uc-Vc0" id="26M-gn-LQB"/>
+                        <outlet property="muteSoundCheckBox" destination="Sf1-mS-ch1" id="Sf1-mS-out"/>
+                        <outlet property="showHudCheckBox" destination="Hd1-oV-wd1" id="Hd1-oV-out"/>
                         <outlet property="quitButton" destination="J5i-rV-IWc" id="FAg-qz-Z3W"/>
                         <outlet property="redMenuBarBackgroundCheckBox" destination="A66-Qf-44f" id="Lp5-Gg-ejx"/>
                         <outlet property="redMenuBarIconCheckBox" destination="T0j-LS-G9b" id="Q9e-U6-5NJ"/>
