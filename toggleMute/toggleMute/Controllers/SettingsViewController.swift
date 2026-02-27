@@ -13,6 +13,8 @@ class SettingsViewController: NSViewController {
     @IBOutlet var launchAtLoginCheckBox: NSButton!
     @IBOutlet weak var redMenuBarIconCheckBox: NSButton!
     @IBOutlet weak var redMenuBarBackgroundCheckBox: NSButton!
+    @IBOutlet weak var muteSoundCheckBox: NSButton!
+    @IBOutlet weak var showHudCheckBox: NSButton!
     @IBOutlet var quitButton: NSButton!
     @IBOutlet weak var shortcutSubView: NSView!
     @IBOutlet weak var versionLabel: NSTextField!
@@ -65,7 +67,10 @@ class SettingsViewController: NSViewController {
         } else {
             redMenuBarIconCheckBox.state = .off
         }
-        
+
+        muteSoundCheckBox.state = preferences.muteSoundEnabled ? .on : .off
+        showHudCheckBox.state = preferences.showHudEnabled ? .on : .off
+
         let recorder = KeyboardShortcuts.RecorderCocoa(for: .toggleMuteShortcut)
 
         recorder.translatesAutoresizingMaskIntoConstraints = false
@@ -131,6 +136,14 @@ class SettingsViewController: NSViewController {
     }
     
     
+    @IBAction func didTouchMuteSound(_ sender: NSButton) {
+        preferences.muteSoundEnabled = sender.state == .on
+    }
+
+    @IBAction func didTouchShowHud(_ sender: NSButton) {
+        preferences.showHudEnabled = sender.state == .on
+    }
+
     @IBAction func didTouchClose(_ sender: Any) {
         
         NSApplication.shared.terminate(nil)

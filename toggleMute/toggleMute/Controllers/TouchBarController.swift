@@ -54,10 +54,10 @@ class TouchBarController {
                 
         if(isMuted) {
             defaults.set(false, forKey: "isMuted")
-            toggleMuteStateHard(setMute: true)
+            toggleMuteStateHard(setMute: true, playFeedback: false)
         } else {
             defaults.set(true, forKey: "isMuted")
-            toggleMuteStateHard(setMute: false)
+            toggleMuteStateHard(setMute: false, playFeedback: false)
         }
     
     }
@@ -99,7 +99,7 @@ class TouchBarController {
     }
     
     
-    func toggleMuteStateHard(setMute: Bool) {
+    func toggleMuteStateHard(setMute: Bool, playFeedback: Bool = true) {
         
         let button = delegateController.statusItem.button
         isMuted = defaults.bool(forKey: "isMuted")
@@ -122,6 +122,13 @@ class TouchBarController {
             }
             
             setNewVolume(newValue: unmuteVal)
+
+            DispatchQueue.main.async {
+                if playFeedback {
+                    SoundFeedbackManager.shared.playUnmute()
+                    MuteHUDWindowController.shared.show(muted: false)
+                }
+            }
             
         } else if(setMute && !isMuted) {
             
@@ -140,6 +147,13 @@ class TouchBarController {
             
             if(redMenuBarIconBackground){
                 button?.layer?.backgroundColor = CGColor(red: 1.0, green: 0, blue: 0 , alpha: 1.0)
+            }
+
+            DispatchQueue.main.async {
+                if playFeedback {
+                    SoundFeedbackManager.shared.playMute()
+                    MuteHUDWindowController.shared.show(muted: true)
+                }
             }
             
         }

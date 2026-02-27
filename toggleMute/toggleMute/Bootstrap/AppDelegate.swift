@@ -122,6 +122,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
         
         touchBarController.configureUI()
         
+        // Pre-warm singletons so NSPanel and NSSound are ready before first toggle
+        DispatchQueue.main.async {
+            _ = SoundFeedbackManager.shared
+            _ = MuteHUDWindowController.shared
+        }
+        
         KeyboardShortcuts.onKeyDown(for: .toggleMuteShortcut) {
             self.touchBarController.toggleMuteState()
             print("start")
