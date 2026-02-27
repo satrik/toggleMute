@@ -44,7 +44,7 @@ final class MuteHUDWindowController {
             let cfg = NSImage.SymbolConfiguration(pointSize: 72, weight: .regular)
             iconView.image = img.withSymbolConfiguration(cfg)
         }
-        iconView.contentTintColor = muted ? .systemRed : .white
+        iconView.contentTintColor = muted ? .systemRed : .labelColor
         label.stringValue = muted ? "Muted" : "Unmuted"
 
         positionWindow()
@@ -75,7 +75,7 @@ final class MuteHUDWindowController {
         container.wantsLayer = true
 
         let blur = NSVisualEffectView(frame: container.bounds)
-        blur.material = .hudWindow
+        blur.material = .popover
         blur.blendingMode = .behindWindow
         blur.state = .active
         blur.wantsLayer = true
@@ -97,7 +97,7 @@ final class MuteHUDWindowController {
         tf.drawsBackground = false
         tf.alignment = .center
         tf.font = .systemFont(ofSize: 18, weight: .bold)
-        tf.textColor = NSColor(white: 1.0, alpha: 0.85) 
+        tf.textColor = .labelColor
         tf.autoresizingMask = [.minXMargin, .maxXMargin]
         blur.addSubview(tf)
         label = tf
