@@ -30,7 +30,8 @@
 
 ```shell
 brew tap satrik/togglemute
-brew install --no-quarantine togglemute
+brew install togglemute
+xattr -rd com.apple.quarantine /Applications/toggleMute.app
 ```
 
 ## Manual Installation
@@ -39,7 +40,7 @@ brew install --no-quarantine togglemute
    - Alternatively, you can clone or download the repository.
 - Mount toggleMute.dmg and move toggleMute.app to your Applications folder.
 - Run (double-click) toggleMuteDisableQuarantine.command.
-   - If this doesn’t work, execute xattr -cr /Applications/toggleMute.app in the Terminal.
+   - If this doesn’t work, execute xattr -rd /Applications/toggleMute.app in the Terminal.
 - Launch the app for the first time via Right-click → Open and select Trust me 😉
 - The Touch Bar button is only visible in the regular “Control Strip” (not the extended version) and cannot be moved elsewhere.
    - To enable it, choose Quick Actions and activate Show Control Strip.
@@ -49,7 +50,8 @@ brew install --no-quarantine togglemute
 
 ```shell
 brew update
-brew updgrade --no-quarantine
+brew updgrade
+xattr -rd com.apple.quarantine /Applications/toggleMute.app
 ```
 
 ### Manually 
