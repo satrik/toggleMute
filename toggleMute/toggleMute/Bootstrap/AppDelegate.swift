@@ -199,12 +199,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
     @objc func runTimedCode(){
 
         mainController.getCurrentVolume()
-                
-        if(defaults.integer(forKey: "currentSetVolume") < 5) {
-            touchBarController.toggleMuteStateHard(setMute: true)
-        } else {
-            touchBarController.toggleMuteStateHard(setMute: false)
-        }
+
+        // Sync UI to the actual device state so the icon reflects external mute
+        // changes (e.g. from the system menu). Reads the real CoreAudio mute
+        // property — falls back to "volume == 0" only when no mute property is
+        // exposed. If we can't tell, leave the UI alone instead of flipping it.
+        guard let muted = AudioInputController.isMuted() else { return }
+        touchBarController.toggleMuteStateHard(setMute: muted)
 
     }
     

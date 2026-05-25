@@ -103,23 +103,17 @@ class MainController: NSViewController, UNUserNotificationCenterDelegate {
 
     
     func getCurrentVolume() {
-        
-        let setInputVolume = "return input volume of (get volume settings)"
-        var error: NSDictionary?
-                
-        if let scriptObject = NSAppleScript(source: setInputVolume) {
-            
-            if let outputString = scriptObject.executeAndReturnError(&error).stringValue {
-                
-                currentSetVolume = Int(outputString)!
-                defaults.set(currentSetVolume, forKey: "currentSetVolume")
-                
-            } else if (error != nil) {
-                // no error handling currently as it just works always :D
-            }
-            
+        // AppleScript's `input volume of (get volume settings)` is unreliable on
+        // Aggregate Devices (often returns a stale 100). Read the actual input
+        // volume via CoreAudio. If muted, report 0 so the slider/UI reflects it.
+        if AudioInputController.isMuted() == true {
+            currentSetVolume = 0
+        } else if let v = AudioInputController.volume() {
+            currentSetVolume = Int((v * 100).rounded())
+        } else {
+            return
         }
-        
+        defaults.set(currentSetVolume, forKey: "currentSetVolume")
     }
     
     

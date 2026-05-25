@@ -19,6 +19,7 @@
 		BD391AE9263C3F5600848049 /* LaunchAtLogin in Frameworks */ = {isa = PBXBuildFile; productRef = BD391AE8263C3F5600848049 /* LaunchAtLogin */; };
 		C3C528C02DF0162800BBC393 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = C3C528BF2DF0162800BBC393 /* KeyboardShortcuts */; };
 		C3DA000A2B88C00900B6BCCA /* EventMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3DA00092B88C00900B6BCCA /* EventMonitor.swift */; };
+		D9A1F4022E0099AA00112233 /* AudioInputController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9A1F4012E0099AA00112233 /* AudioInputController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -51,6 +52,7 @@
 		44EB8BD723AC2ABD005A4A0B /* TouchBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchBarController.swift; sourceTree = "<group>"; };
 		44EB8BDB23AC350D005A4A0B /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		C3DA00092B88C00900B6BCCA /* EventMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventMonitor.swift; sourceTree = "<group>"; };
+		D9A1F4012E0099AA00112233 /* AudioInputController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioInputController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,6 +132,7 @@
 				44D551DF2390830E0065505A /* SharedFileList.h */,
 				44D551DE2390830E0065505A /* SharedFileList.m */,
 				449F398223173003008A0DBD /* Preferences.swift */,
+				D9A1F4012E0099AA00112233 /* AudioInputController.swift */,
 				44D551DD2390830E0065505A /* SettingsController-Bridging-Header.h */,
 				44EB8BD623AC28E3005A4A0B /* NSTouchBar-Private.h */,
 			);
@@ -274,6 +277,7 @@
 				449F398D23173610008A0DBD /* SettingsController.swift in Sources */,
 				449F398323173003008A0DBD /* Preferences.swift in Sources */,
 				C3DA000A2B88C00900B6BCCA /* EventMonitor.swift in Sources */,
+				D9A1F4022E0099AA00112233 /* AudioInputController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
