@@ -19,6 +19,8 @@
 		BD391AE9263C3F5600848049 /* LaunchAtLogin in Frameworks */ = {isa = PBXBuildFile; productRef = BD391AE8263C3F5600848049 /* LaunchAtLogin */; };
 		C3C528C02DF0162800BBC393 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = C3C528BF2DF0162800BBC393 /* KeyboardShortcuts */; };
 		C3DA000A2B88C00900B6BCCA /* EventMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3DA00092B88C00900B6BCCA /* EventMonitor.swift */; };
+		MH001A0001000001 /* SoundFeedbackManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = MH001A0001000000 /* SoundFeedbackManager.swift */; };
+		MH001A0002000001 /* MuteHUDWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = MH001A0002000000 /* MuteHUDWindowController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -51,6 +53,8 @@
 		44EB8BD723AC2ABD005A4A0B /* TouchBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchBarController.swift; sourceTree = "<group>"; };
 		44EB8BDB23AC350D005A4A0B /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		C3DA00092B88C00900B6BCCA /* EventMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventMonitor.swift; sourceTree = "<group>"; };
+		MH001A0001000000 /* SoundFeedbackManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundFeedbackManager.swift; sourceTree = "<group>"; };
+		MH001A0002000000 /* MuteHUDWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MuteHUDWindowController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +77,7 @@
 				447B1DF8236795F100587E3A /* MainController.swift */,
 				44EB8BDB23AC350D005A4A0B /* SettingsViewController.swift */,
 				44EB8BD723AC2ABD005A4A0B /* TouchBarController.swift */,
+				MH001A0002000000 /* MuteHUDWindowController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -132,6 +137,7 @@
 				449F398223173003008A0DBD /* Preferences.swift */,
 				44D551DD2390830E0065505A /* SettingsController-Bridging-Header.h */,
 				44EB8BD623AC28E3005A4A0B /* NSTouchBar-Private.h */,
+				MH001A0001000000 /* SoundFeedbackManager.swift */,
 			);
 			path = Support;
 			sourceTree = "<group>";
@@ -274,6 +280,8 @@
 				449F398D23173610008A0DBD /* SettingsController.swift in Sources */,
 				449F398323173003008A0DBD /* Preferences.swift in Sources */,
 				C3DA000A2B88C00900B6BCCA /* EventMonitor.swift in Sources */,
+				MH001A0001000001 /* SoundFeedbackManager.swift in Sources */,
+				MH001A0002000001 /* MuteHUDWindowController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

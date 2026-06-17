@@ -18,6 +18,22 @@ struct Preferences {
         }
     }
 
+    var muteSoundEnabled: Bool {
+        get { defaults.bool(forKey: #function) }
+        set {
+            defaults.set(newValue, forKey: #function)
+            didChange()
+        }
+    }
+
+    var showHudEnabled: Bool {
+        get { defaults.bool(forKey: #function) }
+        set {
+            defaults.set(newValue, forKey: #function)
+            didChange()
+        }
+    }
+
     private var appURL: URL { Bundle.main.bundleURL }
     
     var launchAtLoginEnabled: Bool {
