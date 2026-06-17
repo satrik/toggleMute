@@ -31,7 +31,7 @@
 ```shell
 brew tap satrik/togglemute
 brew install togglemute
-xattr -rd com.apple.quarantine /Applications/toggleMute.app
+xattr -cr /Applications/toggleMute.app
 ```
 
 ## Manual Installation
