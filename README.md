@@ -30,6 +30,7 @@
 
 ```shell
 brew tap satrik/togglemute
+brew trust --cask satrik/togglemute/togglemute
 brew install togglemute
 xattr -cr /Applications/toggleMute.app
 ```
