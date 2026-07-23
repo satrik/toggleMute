@@ -74,18 +74,12 @@ class TouchBarController {
     
     
     func setNewVolume(newValue: Int) {
-                    
-       let setInputAndResetOutputVolume =
-            """
-            set volume input volume \(newValue)
-            set currentVol to output volume of (get volume settings)
-            set volume output volume currentVol
-            """
-        var error: NSDictionary?
-        if let scriptObject = NSAppleScript(source: setInputAndResetOutputVolume) {
-           scriptObject.executeAndReturnError(&error)
-        }
-                    
+        // Drives the *gain* of the default input device (used when restoring the
+        // user's preferred input volume on unmute, and when the slider moves).
+        // AppleScript's `set volume input volume` is a no-op on Aggregate Devices,
+        // so go through CoreAudio.
+        let clamped = max(0, min(100, newValue))
+        AudioInputController.setVolume(Float32(clamped) / 100.0)
     }
     
 
@@ -107,41 +101,43 @@ class TouchBarController {
         redMenuBarIcon = defaults.bool(forKey: "redMenuBarIcon")
                 
         if(!setMute && isMuted){
-        
+
             defaults.set(false, forKey: "isMuted")
-            
+
             button?.image = imageUnmute?.tint(color: .alternateSelectedControlTextColor)
-            
+
             button?.layer?.backgroundColor = CGColor(red: 0, green: 0, blue: 0 , alpha: 0)
             touchBarButton?.image = imageUnmute
             touchBarButton?.bezelColor = NSColor.clear
+
+            AudioInputController.setMuted(false)
+
             var unmuteVal = 80
-            
             if(isKeyPresentInUserDefaults(key: "defaultInputVol")){
                 unmuteVal = defaults.integer(forKey: "defaultInputVol")
             }
-            
             setNewVolume(newValue: unmuteVal)
-            
+
         } else if(setMute && !isMuted) {
-            
+
             defaults.set(true, forKey: "isMuted")
-                    
+
             button?.image = imageMute?.tint(color: .selectedMenuItemTextColor)
             button?.layer?.backgroundColor = CGColor(red: 0, green: 0, blue: 0 , alpha: 0)
-            
+
             touchBarButton?.image = imageMute
             touchBarButton?.bezelColor = NSColor.red
-            setNewVolume(newValue: 0)
-            
+
+            AudioInputController.setMuted(true)
+
             if(redMenuBarIcon){
                 button?.image = imageMute?.tint(color: .red)
             }
-            
+
             if(redMenuBarIconBackground){
                 button?.layer?.backgroundColor = CGColor(red: 1.0, green: 0, blue: 0 , alpha: 1.0)
             }
-            
+
         }
         
     }
