@@ -111,6 +111,14 @@ class MuteController {
     }
 
 
+    func applyMuteStateToDevices() {
+
+        let muted = defaults.bool(forKey: "isMuted")
+        AudioInputController.setMuted(muted, zeroVolume: defaults.bool(forKey: "muteInputVolumeEnabled"))
+
+    }
+
+
     // Only called from the two branches above, i.e. only on an actual state
     // change — never on the hardware-sync no-ops in syncFromHardware().
     // `holdHUD` keeps the HUD on screen without auto-dismissing, used while

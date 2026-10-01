@@ -229,11 +229,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
     }
     
     
-    // A different device's volume says nothing about a recovery on the
-    // previous one; see syncFromHardware().
+    // Brings newly controlled devices (plugged in, new default input, new
+    // selection) to the apps current mute state.
     func inputDevicesChanged() {
 
         lastPolledVolumeWasNearZero = nil
+        muteController.applyMuteStateToDevices()
 
     }
 

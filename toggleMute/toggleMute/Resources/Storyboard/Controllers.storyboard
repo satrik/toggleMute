@@ -27,9 +27,21 @@
             <objects>
                 <viewController storyboardIdentifier="MainController" id="UKh-ye-bPO" customClass="MainController" customModule="toggleMute" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="wBh-Ot-TGR">
-                        <rect key="frame" x="0.0" y="0.0" width="230" height="410"/>
+                        <rect key="frame" x="0.0" y="0.0" width="230" height="448"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
+                            <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="IDP-01-pop">
+                                <rect key="frame" x="17" y="410" width="197" height="25"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="IDP-02-cel">
+                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="menu"/>
+                                    <menu key="menu" id="IDP-03-men"/>
+                                </popUpButtonCell>
+                                <connections>
+                                    <action selector="didChangeInputDevice:" target="UKh-ye-bPO" id="IDP-04-act"/>
+                                </connections>
+                            </popUpButton>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PtT-01-btn">
                                 <rect key="frame" x="20" y="182" width="190" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -212,6 +224,7 @@
                         </subviews>
                     </view>
                     <connections>
+                        <outlet property="inputDevicePopUp" destination="IDP-01-pop" id="IDP-05-out"/>
                         <outlet property="hudAlwaysVisibleCheckBox" destination="ASH-01-btn" id="ASH-04-out"/>
                         <outlet property="launchAtLoginCheckBox" destination="09C-uc-Vc0" id="26M-gn-LQB"/>
                         <outlet property="muteInputVolumeCheckBox" destination="ZVM-01-btn" id="ZVM-04-out"/>

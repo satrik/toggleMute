@@ -34,6 +34,9 @@ final class ClickableLabel: NSTextField {
 /// nested settings popover.
 class MainController: NSViewController {
 
+    // Input device
+    @IBOutlet weak var inputDevicePopUp: NSPopUpButton!
+
     // General toggles
     @IBOutlet var launchAtLoginCheckBox: NSButton!
     @IBOutlet weak var pushToTalkCheckBox: NSButton!
@@ -88,6 +91,8 @@ class MainController: NSViewController {
 
         super.viewDidLoad()
         setupNotifications()
+
+        setupInputDevicePopUp()
 
         // Version. Only the number is clickable — see ClickableLabel. The
         // two labels are centered together as a pair at runtime since the
@@ -186,6 +191,56 @@ class MainController: NSViewController {
         numberFrame.origin.x = startX + versionPrefixLabel.frame.width + spacing
         numberFrame.origin.y = versionPrefixLabel.frame.origin.y
         versionNumberLabel.frame = numberFrame
+
+    }
+
+
+    private func setupInputDevicePopUp() {
+
+        let menu = inputDevicePopUp.menu!
+        menu.removeAllItems()
+
+        func addItem(_ title: String, _ selection: String) {
+            let item = menu.addItem(withTitle: title, action: nil, keyEquivalent: "")
+            item.representedObject = selection
+        }
+
+        addItem("Default input", AudioInputController.followDefault)
+        addItem("All microphones", AudioInputController.allMicrophones)
+        addItem("All inputs (incl. virtual)", AudioInputController.allInputs)
+        menu.addItem(.separator())
+        let devices = AudioInputController.inputDevices()
+        for device in devices {
+            addItem(device.isVirtual ? "\(device.name) (virtual)" : device.name, device.uid)
+        }
+
+        let selection = preferences.inputDeviceSelection
+        if AudioInputController.isSpecificDevice(selection) && !devices.contains(where: { $0.uid == selection }) {
+            addItem("\(preferences.inputDeviceName ?? "Device") (disconnected, using default)", selection)
+        }
+        inputDevicePopUp.selectItem(at: menu.items.firstIndex { $0.representedObject as? String == selection } ?? 0)
+
+    }
+
+
+    @IBAction func didChangeInputDevice(_ sender: NSPopUpButton) {
+
+        guard let selection = sender.selectedItem?.representedObject as? String,
+              selection != preferences.inputDeviceSelection else { return }
+
+        // Unmute the devices that stop being controlled
+        let muteController = delegateController.muteController
+        let wasMuted = muteController.isMuted
+        if(wasMuted) { muteController.toggleMuteStateHard(setMute: false, notify: false) }
+        preferences.inputDeviceName = sender.selectedItem?.title
+        preferences.inputDeviceSelection = selection
+        AudioInputController.refreshWatchedDevices()
+        if(wasMuted) { muteController.toggleMuteStateHard(setMute: true, notify: false) }
+        delegateController.inputDevicesChanged()
+
+        if(preferences.hudEnabled && preferences.hudAlwaysVisible) {
+            refreshAlwaysVisibleHUD()
+        }
 
     }
 
