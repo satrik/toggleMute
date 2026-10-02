@@ -17,10 +17,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
     var eventMonitor: EventMonitor?
     var updateCheckTimer: Timer?
 
-    // Tracks whether the last sync saw input volume near zero — used by
-    // syncFromHardware() to detect a volume recovery (see there for why).
-    private var lastPolledVolumeWasNearZero: Bool?
-
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         completionHandler([.banner, .list, .badge, .sound])
@@ -229,17 +225,24 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
     }
     
     
+    private var mainController: MainController? {
+        popoverView.contentViewController as? MainController
+    }
+
+
     // Brings newly controlled devices (plugged in, new default input, new
     // selection) to the apps current mute state.
     func inputDevicesChanged() {
 
-        lastPolledVolumeWasNearZero = nil
         muteController.applyMuteStateToDevices()
+        mainController?.updateInputVolume()
 
     }
 
 
     func syncFromHardware() {
+
+        mainController?.updateInputVolume()
 
         // Sync UI to the actual device state so the icon reflects external mute
         // changes (e.g. from the system menu). Reads the real CoreAudio mute
@@ -260,9 +263,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
         // currently muted is an unambiguous "the hardware just unmuted"
         // signal, so it overrides a stuck property and forces a proper
         // unmute (which clears the property too).
-        let volumeIsNearZero = (AudioInputController.volume() ?? 1) < 0.05
-        let volumeJustRecovered = lastPolledVolumeWasNearZero == true && !volumeIsNearZero
-        lastPolledVolumeWasNearZero = volumeIsNearZero
+        let volumeJustRecovered = AudioInputController.volumeRecoveredExternally()
 
         if volumeJustRecovered && muteController.isMuted {
             muteController.toggleMuteStateHard(setMute: false)

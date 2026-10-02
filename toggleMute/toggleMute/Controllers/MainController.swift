@@ -28,6 +28,49 @@ final class ClickableLabel: NSTextField {
 }
 
 
+/// Marks a position on the track with a dot, and tints the track red while
+/// muted; the input volume slider uses them for the volume unmuting restores
+/// and for the mute state.
+final class MarkerSliderCell: NSSliderCell {
+
+    var marker: Double?
+    var muted = false
+    private(set) var isTracking = false
+
+    override func startTracking(at startPoint: NSPoint, in controlView: NSView) -> Bool {
+        isTracking = true
+        return super.startTracking(at: startPoint, in: controlView)
+    }
+
+    override func stopTracking(last lastPoint: NSPoint, current stopPoint: NSPoint, in controlView: NSView, mouseIsUp flag: Bool) {
+        isTracking = false
+        super.stopTracking(last: lastPoint, current: stopPoint, in: controlView, mouseIsUp: flag)
+        // Reports the release, which a continuous slider may send before this.
+        (controlView as? NSControl)?.sendAction(action, to: target)
+    }
+
+    override func drawBar(inside rect: NSRect, flipped: Bool) {
+        if muted {
+            let radius = rect.height / 2
+            NSColor.systemRed.withAlphaComponent(0.3).setFill()
+            NSBezierPath(roundedRect: rect, xRadius: radius, yRadius: radius).fill()
+            var filled = rect
+            filled.size.width = knobRect(flipped: flipped).midX - rect.minX
+            NSColor.systemRed.setFill()
+            NSBezierPath(roundedRect: filled, xRadius: radius, yRadius: radius).fill()
+        } else {
+            super.drawBar(inside: rect, flipped: flipped)
+        }
+        guard let marker = marker else { return }
+        let knobWidth = knobRect(flipped: flipped).width
+        let x = rect.minX + knobWidth / 2 + (rect.width - knobWidth) * CGFloat(marker)
+        (muted ? NSColor.systemRed : NSColor.secondaryLabelColor).setFill()
+        NSBezierPath(ovalIn: NSRect(x: x - 3, y: rect.midY - 3, width: 6, height: 6)).fill()
+    }
+
+}
+
+
 /// The single popover shown when clicking the menu bar icon (or right-
 /// clicking it). Combines volume, all toggles, the shortcut recorder, and
 /// the footer actions in one native-feeling view instead of a separate
@@ -36,6 +79,8 @@ class MainController: NSViewController {
 
     // Input device
     @IBOutlet weak var inputDevicePopUp: NSPopUpButton!
+    @IBOutlet weak var inputVolumeLabel: NSTextField!
+    @IBOutlet weak var inputVolumeSlider: NSSlider!
 
     // General toggles
     @IBOutlet var launchAtLoginCheckBox: NSButton!
@@ -93,6 +138,7 @@ class MainController: NSViewController {
         setupNotifications()
 
         setupInputDevicePopUp()
+        updateInputVolume()
 
         // Version. Only the number is clickable — see ClickableLabel. The
         // two labels are centered together as a pair at runtime since the
@@ -195,6 +241,57 @@ class MainController: NSViewController {
     }
 
 
+    /// The controlled volume as last read or written; reading it mid-drag would wait for the writes.
+    private var inputVolume: Float32?
+
+
+    /// Volume of the selected device, or of the default input in the "all"
+    /// modes.
+    /// Takes the slider value while dragging, as the write lands later.
+    func updateInputVolume(_ volume: Float32? = AudioInputController.volume()) {
+
+        inputVolume = volume
+        let cell = inputVolumeSlider.cell as? MarkerSliderCell
+        // Hardware rounds volumes to its own steps; reading them back mid-drag makes the knob jitter.
+        if cell?.isTracking != true { inputVolumeSlider.doubleValue = Double(volume ?? 0) }
+        let atZero = volume.map { $0 < AudioInputController.nearZeroVolume } ?? false
+        let muted = delegateController.muteController.isMuted
+        inputVolumeSlider.isEnabled = volume != nil
+        cell?.marker = atZero ? AudioInputController.restoreVolume().map(Double.init) : nil
+        cell?.muted = muted
+        inputVolumeSlider.needsDisplay = true
+        inputVolumeLabel.stringValue = "Input volume: " + (volume.map { "\(Int(($0 * 100).rounded()))%" } ?? "not adjustable") + (muted ? " (muted)" : "")
+
+    }
+
+
+    // Sets every controlled device, so the "all" modes share one level.
+    @IBAction func didChangeInputVolume(_ sender: NSSlider) {
+
+        let nearZero = AudioInputController.nearZeroVolume
+        // The state sync reads anything below it as muted.
+        if sender.doubleValue < Double(nearZero) { sender.doubleValue = 0 }
+        let volume = Float32(sender.doubleValue)
+        let dragging = (sender.cell as? MarkerSliderCell)?.isTracking == true
+        let muteController = delegateController.muteController
+        // Raising it from 0 would go live past push to talk, so the drag
+        // only picks the volume push to talk unmutes with.
+        if muteController.isMuted && preferences.pushToTalkEnabled && preferences.muteInputVolumeEnabled {
+            guard !dragging else { return }
+            // Restoring a volume below it would mute again.
+            if volume >= nearZero { AudioInputController.setRestoreVolume(volume) }
+            updateInputVolume()
+            return
+        }
+        let raisedFromZero = (inputVolume ?? 1) < nearZero && volume >= nearZero
+        AudioInputController.setVolume(volume, dragging: dragging)
+        // Raising a muted mic from 0 unmutes it.
+        if raisedFromZero && muteController.isMuted { muteController.toggleMuteStateHard(setMute: false) }
+        updateInputVolume(volume)
+
+    }
+
+
     private func setupInputDevicePopUp() {
 
         let menu = inputDevicePopUp.menu!
@@ -264,6 +361,7 @@ class MainController: NSViewController {
             // in-memory isMuted stays in sync with the one press/release uses.
             delegateController.muteController.toggleMuteStateHard(setMute: true)
         }
+        updateInputVolume()
 
     }
 
@@ -345,6 +443,7 @@ class MainController: NSViewController {
     @IBAction func didTouchMuteInputVolume(_ sender: NSButton) {
 
         preferences.muteInputVolumeEnabled = sender.state == .on
+        updateInputVolume()
         guard delegateController.muteController.isMuted else { return }
         if preferences.muteInputVolumeEnabled {
             AudioInputController.setMuted(true, zeroVolume: true)
