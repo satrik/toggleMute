@@ -184,6 +184,7 @@ class MainController: NSViewController {
         let recorder = KeyboardShortcuts.RecorderCocoa(for: .toggleMuteShortcut)
         recorder.translatesAutoresizingMaskIntoConstraints = false
         shortcutSubView.addSubview(recorder)
+        recorder.toolTip = shortcutSubView.toolTip
         NSLayoutConstraint.activate([
             recorder.leadingAnchor.constraint(equalTo: shortcutSubView.leadingAnchor),
             recorder.trailingAnchor.constraint(equalTo: shortcutSubView.trailingAnchor),
