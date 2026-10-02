@@ -156,6 +156,7 @@ class MainController: NSViewController {
         pushToTalkCheckBox.state = preferences.pushToTalkEnabled ? .on : .off
         playSoundsCheckBox.state = preferences.soundsEnabled ? .on : .off
         showHUDCheckBox.state = preferences.hudEnabled ? .on : .off
+        updateHUDOptionsEnabled()
         hudAlwaysVisibleCheckBox.state = preferences.hudAlwaysVisible ? .on : .off
         redHUDIconCheckBox.state = preferences.hudRedIconEnabled ? .on : .off
         showDeviceNameCheckBox.state = preferences.hudShowDeviceName ? .on : .off
@@ -377,6 +378,7 @@ class MainController: NSViewController {
 
         let enabled = sender.state == .on
         preferences.hudEnabled = enabled
+        updateHUDOptionsEnabled()
 
         if(!enabled) {
             HUDController.shared.hide()
@@ -385,6 +387,15 @@ class MainController: NSViewController {
             if(preferences.hudAlwaysVisible) {
                 refreshAlwaysVisibleHUD()
             }
+        }
+
+    }
+
+
+    private func updateHUDOptionsEnabled() {
+
+        for checkBox in [hudAlwaysVisibleCheckBox, showDeviceNameCheckBox, redHUDIconCheckBox] {
+            checkBox?.isEnabled = preferences.hudEnabled
         }
 
     }

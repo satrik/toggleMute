@@ -27,11 +27,11 @@
             <objects>
                 <viewController storyboardIdentifier="MainController" id="UKh-ye-bPO" customClass="MainController" customModule="toggleMute" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="wBh-Ot-TGR">
-                        <rect key="frame" x="0.0" y="0.0" width="230" height="492"/>
+                        <rect key="frame" x="0.0" y="0.0" width="230" height="583"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="IDP-01-pop">
-                                <rect key="frame" x="17" y="454" width="197" height="25"/>
+                                <rect key="frame" x="17" y="524" width="197" height="25"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="IDP-02-cel">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -43,7 +43,7 @@
                                 </connections>
                             </popUpButton>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="IVL-01-lbl">
-                                <rect key="frame" x="18" y="432" width="194" height="16"/>
+                                <rect key="frame" x="18" y="504" width="194" height="16"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" lineBreakMode="truncatingTail" title="Input volume" id="IVL-02-cel">
                                     <font key="font" metaFont="smallSystem"/>
@@ -52,15 +52,51 @@
                                 </textFieldCell>
                             </textField>
                             <slider verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="IVS-01-sld">
-                                <rect key="frame" x="18" y="406" width="194" height="20"/>
+                                <rect key="frame" x="18" y="483" width="194" height="20"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <sliderCell key="cell" continuous="YES" customClass="MarkerSliderCell" customModule="toggleMute" customModuleProvider="target" state="on" alignment="left" maxValue="1" doubleValue="1" tickMarkPosition="above" sliderType="linear" id="IVS-02-cel"/>
                                 <connections>
                                     <action selector="didChangeInputVolume:" target="UKh-ye-bPO" id="IVS-03-act"/>
                                 </connections>
                             </slider>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SEC-11-lbl">
+                                <rect key="frame" x="18" y="555" width="194" height="14"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="MICROPHONE" id="SEC-12-cel">
+                                    <font key="font" metaFont="smallSystemBold"/>
+                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SEC-21-lbl">
+                                <rect key="frame" x="18" y="405" width="194" height="14"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="HUD" id="SEC-22-cel">
+                                    <font key="font" metaFont="smallSystemBold"/>
+                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SEC-31-lbl">
+                                <rect key="frame" x="18" y="279" width="194" height="14"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="MENU BAR" id="SEC-32-cel">
+                                    <font key="font" metaFont="smallSystemBold"/>
+                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SEC-41-lbl">
+                                <rect key="frame" x="18" y="201" width="194" height="14"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="GENERAL" id="SEC-42-cel">
+                                    <font key="font" metaFont="smallSystemBold"/>
+                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PtT-01-btn">
-                                <rect key="frame" x="20" y="182" width="190" height="18"/>
+                                <rect key="frame" x="20" y="459" width="190" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="check" title="Push to talk" bezelStyle="regularSquare" imagePosition="left" inset="2" id="PtT-02-cel">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -71,7 +107,7 @@
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HUD-01-btn">
-                                <rect key="frame" x="20" y="376" width="190" height="18"/>
+                                <rect key="frame" x="20" y="177" width="190" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="check" title="Play sounds" bezelStyle="regularSquare" imagePosition="left" inset="2" id="HUD-02-cel">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -82,9 +118,9 @@
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HUD-04-btn">
-                                <rect key="frame" x="20" y="352" width="190" height="18"/>
+                                <rect key="frame" x="20" y="381" width="190" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <buttonCell key="cell" type="check" title="Show HUD" bezelStyle="regularSquare" imagePosition="left" inset="2" id="HUD-05-cel">
+                                <buttonCell key="cell" type="check" title="Enabled" bezelStyle="regularSquare" imagePosition="left" inset="2" id="HUD-05-cel">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
@@ -93,9 +129,9 @@
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ASH-01-btn">
-                                <rect key="frame" x="20" y="328" width="190" height="18"/>
+                                <rect key="frame" x="38" y="357" width="172" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <buttonCell key="cell" type="check" title="Always show HUD" bezelStyle="regularSquare" imagePosition="left" inset="2" id="ASH-02-cel">
+                                <buttonCell key="cell" type="check" title="Always show" bezelStyle="regularSquare" imagePosition="left" inset="2" id="ASH-02-cel">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
@@ -104,7 +140,7 @@
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SDN-01-btn">
-                                <rect key="frame" x="20" y="304" width="190" height="18"/>
+                                <rect key="frame" x="38" y="333" width="172" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="check" title="Show device name" bezelStyle="regularSquare" imagePosition="left" inset="2" id="SDN-02-cel">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -115,9 +151,9 @@
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RHI-01-btn">
-                                <rect key="frame" x="20" y="280" width="190" height="18"/>
+                                <rect key="frame" x="38" y="309" width="172" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <buttonCell key="cell" type="check" title="Red HUD icon" bezelStyle="regularSquare" imagePosition="left" inset="2" id="RHI-02-cel">
+                                <buttonCell key="cell" type="check" title="Red icon" bezelStyle="regularSquare" imagePosition="left" inset="2" id="RHI-02-cel">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
@@ -126,7 +162,7 @@
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZVM-01-btn">
-                                <rect key="frame" x="20" y="206" width="190" height="18"/>
+                                <rect key="frame" x="20" y="435" width="190" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="check" title="Set Input Volume to 0" bezelStyle="regularSquare" imagePosition="left" inset="2" id="ZVM-02-cel">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -137,9 +173,9 @@
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="T0j-LS-G9b">
-                                <rect key="frame" x="20" y="230" width="132" height="20"/>
+                                <rect key="frame" x="20" y="255" width="190" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <buttonCell key="cell" type="check" title="Red Menubar Icon" bezelStyle="regularSquare" imagePosition="left" inset="2" id="ZwO-CH-Rfw">
+                                <buttonCell key="cell" type="check" title="Red icon" bezelStyle="regularSquare" imagePosition="left" inset="2" id="ZwO-CH-Rfw">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
@@ -148,9 +184,9 @@
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="A66-Qf-44f">
-                                <rect key="frame" x="20" y="256" width="179" height="18"/>
+                                <rect key="frame" x="20" y="231" width="190" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <buttonCell key="cell" type="check" title="Red Menubar Background" bezelStyle="regularSquare" imagePosition="left" inset="2" id="FF6-0H-k9n">
+                                <buttonCell key="cell" type="check" title="Red background" bezelStyle="regularSquare" imagePosition="left" inset="2" id="FF6-0H-k9n">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
@@ -158,16 +194,12 @@
                                     <action selector="didTouchRedMenuBarBackground:" target="UKh-ye-bPO" id="Sea-Ra-3aj"/>
                                 </connections>
                             </button>
-                            <box verticalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="w9j-5S-ZZS">
-                                <rect key="frame" x="12" y="145" width="206" height="5"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            </box>
                             <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MJg-6Y-ReN">
-                                <rect key="frame" x="20" y="121" width="140" height="16"/>
+                                <rect key="frame" x="18" y="123" width="194" height="14"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" title="Keyboard Shortcut" id="VpL-F4-C9d">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="KEYBOARD SHORTCUT" id="VpL-F4-C9d">
+                                    <font key="font" metaFont="smallSystemBold"/>
+                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
@@ -228,7 +260,7 @@
                                 <color key="contentTintColor" name="controlAccentColor" catalog="System" colorSpace="catalog"/>
                             </imageView>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="09C-uc-Vc0">
-                                <rect key="frame" x="20" y="158" width="190" height="18"/>
+                                <rect key="frame" x="20" y="153" width="190" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="check" title="Launch at login" bezelStyle="regularSquare" imagePosition="left" inset="2" id="6xX-4F-EZv">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
