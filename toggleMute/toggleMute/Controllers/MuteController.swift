@@ -8,8 +8,6 @@ class MuteController {
     
     let defaults = UserDefaults.standard
     var isMuted = false
-    var redMenuBarIconBackground = false
-    var redMenuBarIcon = false
     let imageMute = NSImage(systemSymbolName: "mic.slash", accessibilityDescription: "Mute")
     let imageUnmute = NSImage(systemSymbolName: "mic", accessibilityDescription: "Unmute")
 
@@ -68,20 +66,14 @@ class MuteController {
     
     func toggleMuteStateHard(setMute: Bool, notify: Bool = true, holdHUD: Bool = false) {
         
-        let button = delegateController.statusItem.button
         isMuted = defaults.bool(forKey: "isMuted")
-        redMenuBarIconBackground = defaults.bool(forKey: "redMenuBarBackground")
-        redMenuBarIcon = defaults.bool(forKey: "redMenuBarIcon")
                 
         if(!setMute && isMuted){
 
             defaults.set(false, forKey: "isMuted")
             isMuted = false
 
-            button?.image = imageUnmute?.tint(color: .controlTextColor)
-
-            button?.layer?.backgroundColor = CGColor(red: 0, green: 0, blue: 0 , alpha: 0)
-
+            updateMenuBarIcon()
             AudioInputController.setMuted(false)
 
             if notify { notifyStateChange(muted: false, holdHUD: holdHUD) }
@@ -91,23 +83,26 @@ class MuteController {
             defaults.set(true, forKey: "isMuted")
             isMuted = true
 
-            button?.image = imageMute?.tint(color: .controlTextColor)
-            button?.layer?.backgroundColor = CGColor(red: 0, green: 0, blue: 0 , alpha: 0)
-
+            updateMenuBarIcon()
             AudioInputController.setMuted(true, zeroVolume: defaults.bool(forKey: "muteInputVolumeEnabled"))
-
-            if(redMenuBarIcon){
-                button?.image = imageMute?.tint(color: MuteController.redColor)
-            }
-
-            if(redMenuBarIconBackground){
-                button?.layer?.backgroundColor = MuteController.redColor.cgColor
-            }
 
             if notify { notifyStateChange(muted: true, holdHUD: holdHUD) }
 
         }
+
+        delegateController.inputState.refresh()
         
+    }
+
+
+    func updateMenuBarIcon() {
+
+        let button = delegateController.statusItem.button
+        let redIcon = isMuted && defaults.bool(forKey: "redMenuBarIcon")
+        let redBackground = isMuted && defaults.bool(forKey: "redMenuBarBackground")
+        button?.image = (isMuted ? imageMute : imageUnmute)?.tint(color: redIcon ? MuteController.redColor : .controlTextColor)
+        button?.layer?.backgroundColor = redBackground ? MuteController.redColor.cgColor : .clear
+
     }
 
 

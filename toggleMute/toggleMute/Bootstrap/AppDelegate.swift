@@ -5,13 +5,21 @@ import LaunchAtLogin
 import KeyboardShortcuts
 import UserNotifications
 
-@NSApplicationMain
+@main
 class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDelegate {
+
+    static func main() {
+        let delegate = AppDelegate()
+        NSApplication.shared.delegate = delegate
+        withExtendedLifetime(delegate) { NSApplication.shared.run() }
+    }
     
     let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
 
     private lazy var preferences = Preferences()
     lazy var muteController = MuteController()
+    let inputState = InputState()
+    private lazy var mainController = MainController(state: inputState)
     let repoUrl = URL(string: "https://github.com/satrik/toggleMute")!
     let popoverView = NSPopover()
     var eventMonitor: EventMonitor?
@@ -83,17 +91,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
 
         }
         
-        popoverView.contentViewController = MainController.createController()
+        popoverView.contentViewController = mainController
         popoverView.setValue(true, forKeyPath: "shouldHideAnchor")
-        popoverView.behavior = .transient
+        popoverView.behavior = .applicationDefined
+        popoverView.animates = false
 
-        eventMonitor = EventMonitor(mask: [.leftMouseDown, .rightMouseDown]) { [weak self] event in
-          
-            if let strongSelf = self, (strongSelf.popoverView.isShown) {
-                strongSelf.popoverView.performClose((Any).self)
-                strongSelf.eventMonitor?.stop()
-            }
-          
+        eventMonitor = EventMonitor(mask: [.leftMouseDown, .rightMouseDown]) { [weak self] _ in
+            self?.closeMainController()
+        }
+        NotificationCenter.default.addObserver(forName: NSApplication.didResignActiveNotification, object: nil, queue: .main) { [weak self] _ in
+            self?.closeMainController()
         }
         
         muteController.configureUI()
@@ -223,11 +230,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
         notificationCenter.add(request)
         
     }
-    
-    
-    private var mainController: MainController? {
-        popoverView.contentViewController as? MainController
-    }
 
 
     // Brings newly controlled devices (plugged in, new default input, new
@@ -235,20 +237,21 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
     func inputDevicesChanged() {
 
         muteController.applyMuteStateToDevices()
-        mainController?.updateInputVolume()
+        inputState.refreshDevices()
 
     }
 
 
     func syncFromHardware() {
 
-        mainController?.updateInputVolume()
-
         // Sync UI to the actual device state so the icon reflects external mute
         // changes (e.g. from the system menu). Reads the real CoreAudio mute
         // property — falls back to "volume == 0" only when no mute property is
         // exposed. If we can't tell, leave the UI alone instead of flipping it.
-        guard let muted = AudioInputController.isMuted() else { return }
+        guard let muted = AudioInputController.isMuted() else {
+            inputState.refresh()
+            return
+        }
 
         // Some hardware (many Bluetooth/USB headsets, e.g. Jabra) only has a
         // mute BUTTON that drives input volume — it never touches CoreAudio's
@@ -304,9 +307,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
     
     
     @objc private func showMainController() {
-        
-        let mainController = MainController.instantiate(with: preferences)
-        popoverView.contentViewController = mainController
 
         guard let button = statusItem.button else {
             fatalError("Couldn't find status item button.")
@@ -314,11 +314,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
         
         if(popoverView.isShown) {
             
-            popoverView.close()
-            eventMonitor?.stop()
+            closeMainController(hide: true)
             
         } else {
             
+            inputState.refreshDevices()
+            mainController.view.layoutSubtreeIfNeeded()
+            popoverView.contentSize = mainController.view.fittingSize
             popoverView.show(relativeTo: button.bounds.offsetBy(dx: 0, dy: -6), of: button, preferredEdge: NSRectEdge.minY)
             popoverView.contentViewController?.view.window?.becomeKey()
             
@@ -327,6 +329,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
 
         }
 
+    }
+
+
+    private func closeMainController(hide: Bool = false) {
+        guard popoverView.isShown else { return }
+        popoverView.close()
+        eventMonitor?.stop()
+        // Give back focus to the app that was active before the popover opened
+        if hide && NSApp.isActive { NSApp.hide(nil) }
     }
 
     
