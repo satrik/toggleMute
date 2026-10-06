@@ -8,8 +8,6 @@ class MuteController {
     
     let defaults = UserDefaults.standard
     var isMuted = false
-    var redMenuBarIconBackground = false
-    var redMenuBarIcon = false
     let imageMute = NSImage(systemSymbolName: "mic.slash", accessibilityDescription: "Mute")
     let imageUnmute = NSImage(systemSymbolName: "mic", accessibilityDescription: "Unmute")
 
@@ -61,16 +59,6 @@ class MuteController {
     }
     
     
-    func setNewVolume(newValue: Int) {
-        // Drives the *gain* of the default input device (used when restoring the
-        // user's preferred input volume on unmute, and when the slider moves).
-        // AppleScript's `set volume input volume` is a no-op on Aggregate Devices,
-        // so go through CoreAudio.
-        let clamped = max(0, min(100, newValue))
-        AudioInputController.setVolume(Float32(clamped) / 100.0)
-    }
-    
-
     func toggleMuteState() {
         toggleMuteStateHard(setMute: !isMuted)
     }
@@ -78,27 +66,15 @@ class MuteController {
     
     func toggleMuteStateHard(setMute: Bool, notify: Bool = true, holdHUD: Bool = false) {
         
-        let button = delegateController.statusItem.button
         isMuted = defaults.bool(forKey: "isMuted")
-        redMenuBarIconBackground = defaults.bool(forKey: "redMenuBarBackground")
-        redMenuBarIcon = defaults.bool(forKey: "redMenuBarIcon")
                 
         if(!setMute && isMuted){
 
             defaults.set(false, forKey: "isMuted")
             isMuted = false
 
-            button?.image = imageUnmute?.tint(color: .controlTextColor)
-
-            button?.layer?.backgroundColor = CGColor(red: 0, green: 0, blue: 0 , alpha: 0)
-
+            updateMenuBarIcon()
             AudioInputController.setMuted(false)
-
-            var unmuteVal = 80
-            if(isKeyPresentInUserDefaults(key: "defaultInputVol")){
-                unmuteVal = defaults.integer(forKey: "defaultInputVol")
-            }
-            setNewVolume(newValue: unmuteVal)
 
             if notify { notifyStateChange(muted: false, holdHUD: holdHUD) }
 
@@ -107,36 +83,39 @@ class MuteController {
             defaults.set(true, forKey: "isMuted")
             isMuted = true
 
-            button?.image = imageMute?.tint(color: .controlTextColor)
-            button?.layer?.backgroundColor = CGColor(red: 0, green: 0, blue: 0 , alpha: 0)
-
-            AudioInputController.setMuted(true)
-
-            if(defaults.bool(forKey: "muteInputVolumeEnabled")) {
-                // Optional extra hard-mute: also zero the input gain, for
-                // devices/drivers that don't fully respect CoreAudio's mute
-                // property on their own. The unmute branch above already
-                // restores the configured volume unconditionally.
-                setNewVolume(newValue: 0)
-            }
-
-            if(redMenuBarIcon){
-                button?.image = imageMute?.tint(color: MuteController.redColor)
-            }
-
-            if(redMenuBarIconBackground){
-                button?.layer?.backgroundColor = MuteController.redColor.cgColor
-            }
+            updateMenuBarIcon()
+            AudioInputController.setMuted(true, zeroVolume: defaults.bool(forKey: "muteInputVolumeEnabled"))
 
             if notify { notifyStateChange(muted: true, holdHUD: holdHUD) }
 
         }
+
+        delegateController.inputState.refresh()
         
     }
 
 
+    func updateMenuBarIcon() {
+
+        let button = delegateController.statusItem.button
+        let redIcon = isMuted && defaults.bool(forKey: "redMenuBarIcon")
+        let redBackground = isMuted && defaults.bool(forKey: "redMenuBarBackground")
+        button?.image = (isMuted ? imageMute : imageUnmute)?.tint(color: redIcon ? MuteController.redColor : .controlTextColor)
+        button?.layer?.backgroundColor = redBackground ? MuteController.redColor.cgColor : .clear
+
+    }
+
+
+    func applyMuteStateToDevices() {
+
+        let muted = defaults.bool(forKey: "isMuted")
+        AudioInputController.setMuted(muted, zeroVolume: defaults.bool(forKey: "muteInputVolumeEnabled"))
+
+    }
+
+
     // Only called from the two branches above, i.e. only on an actual state
-    // change — never on the periodic hardware-sync no-ops in runTimedCode().
+    // change — never on the hardware-sync no-ops in syncFromHardware().
     // `holdHUD` keeps the HUD on screen without auto-dismissing, used while
     // push-to-talk is being held down.
     private func notifyStateChange(muted: Bool, holdHUD: Bool) {

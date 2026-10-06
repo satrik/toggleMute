@@ -5,22 +5,25 @@ import LaunchAtLogin
 import KeyboardShortcuts
 import UserNotifications
 
-@NSApplicationMain
+@main
 class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDelegate {
+
+    static func main() {
+        let delegate = AppDelegate()
+        NSApplication.shared.delegate = delegate
+        withExtendedLifetime(delegate) { NSApplication.shared.run() }
+    }
     
     let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
 
     private lazy var preferences = Preferences()
     lazy var muteController = MuteController()
+    let inputState = InputState()
+    private lazy var mainController = MainController(state: inputState)
     let repoUrl = URL(string: "https://github.com/satrik/toggleMute")!
     let popoverView = NSPopover()
     var eventMonitor: EventMonitor?
-    var refreshTimer: Timer?
     var updateCheckTimer: Timer?
-
-    // Tracks whether the last poll saw input volume near zero — used by
-    // runTimedCode() to detect a volume recovery (see there for why).
-    private var lastPolledVolumeWasNearZero: Bool?
 
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
@@ -51,8 +54,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         
         LaunchAtLogin.migrateIfNeeded()
-        
-        refreshTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(runTimedCode), userInfo: nil, repeats: true)
         
         UNUserNotificationCenter.current().delegate = self
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { _, _ in }
@@ -90,20 +91,24 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
 
         }
         
-        popoverView.contentViewController = MainController.createController()
+        popoverView.contentViewController = mainController
         popoverView.setValue(true, forKeyPath: "shouldHideAnchor")
-        popoverView.behavior = .transient
+        popoverView.behavior = .applicationDefined
+        popoverView.animates = false
 
-        eventMonitor = EventMonitor(mask: [.leftMouseDown, .rightMouseDown]) { [weak self] event in
-          
-            if let strongSelf = self, (strongSelf.popoverView.isShown) {
-                strongSelf.popoverView.performClose((Any).self)
-                strongSelf.eventMonitor?.stop()
-            }
-          
+        eventMonitor = EventMonitor(mask: [.leftMouseDown, .rightMouseDown]) { [weak self] _ in
+            self?.closeMainController()
+        }
+        NotificationCenter.default.addObserver(forName: NSApplication.didResignActiveNotification, object: nil, queue: .main) { [weak self] _ in
+            self?.closeMainController()
         }
         
         muteController.configureUI()
+
+        AudioInputController.startMonitoring(
+            devicesChanged: { [weak self] in self?.inputDevicesChanged() },
+            stateChanged: { [weak self] in self?.syncFromHardware() }
+        )
         
         KeyboardShortcuts.onKeyDown(for: .toggleMuteShortcut) {
             if self.preferences.pushToTalkEnabled {
@@ -121,10 +126,19 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
                 self.muteController.toggleMuteStateHard(setMute: true)
             }
         }
-        
+
     }
-    
-    
+
+
+    // Leaves no microphone muted without the app around to unmute it. The
+    // stored "isMuted" stays, so the next launch mutes again.
+    func applicationWillTerminate(_ notification: Notification) {
+
+        if muteController.isMuted { AudioInputController.setMuted(false) }
+
+    }
+
+
     // Runs the actual check only if it's never run before, or it's been at
     // least a day since the last one — called at launch and then every hour
     // to re-evaluate, which (unlike a bare 24h timer) keeps working
@@ -216,15 +230,28 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
         notificationCenter.add(request)
         
     }
-    
-    
-    @objc func runTimedCode(){
+
+
+    // Brings newly controlled devices (plugged in, new default input, new
+    // selection) to the apps current mute state.
+    func inputDevicesChanged() {
+
+        muteController.applyMuteStateToDevices()
+        inputState.refreshDevices()
+
+    }
+
+
+    func syncFromHardware() {
 
         // Sync UI to the actual device state so the icon reflects external mute
         // changes (e.g. from the system menu). Reads the real CoreAudio mute
         // property — falls back to "volume == 0" only when no mute property is
         // exposed. If we can't tell, leave the UI alone instead of flipping it.
-        guard let muted = AudioInputController.isMuted() else { return }
+        guard let muted = AudioInputController.isMuted() else {
+            inputState.refresh()
+            return
+        }
 
         // Some hardware (many Bluetooth/USB headsets, e.g. Jabra) only has a
         // mute BUTTON that drives input volume — it never touches CoreAudio's
@@ -239,9 +266,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
         // currently muted is an unambiguous "the hardware just unmuted"
         // signal, so it overrides a stuck property and forces a proper
         // unmute (which clears the property too).
-        let volumeIsNearZero = (AudioInputController.volume() ?? 1) < 0.05
-        let volumeJustRecovered = lastPolledVolumeWasNearZero == true && !volumeIsNearZero
-        lastPolledVolumeWasNearZero = volumeIsNearZero
+        let volumeJustRecovered = AudioInputController.volumeRecoveredExternally()
 
         if volumeJustRecovered && muteController.isMuted {
             muteController.toggleMuteStateHard(setMute: false)
@@ -282,9 +307,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
     
     
     @objc private func showMainController() {
-        
-        let mainController = MainController.instantiate(with: preferences)
-        popoverView.contentViewController = mainController
 
         guard let button = statusItem.button else {
             fatalError("Couldn't find status item button.")
@@ -292,11 +314,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
         
         if(popoverView.isShown) {
             
-            popoverView.close()
-            eventMonitor?.stop()
+            closeMainController(hide: true)
             
         } else {
             
+            inputState.refreshDevices()
+            mainController.view.layoutSubtreeIfNeeded()
+            popoverView.contentSize = mainController.view.fittingSize
             popoverView.show(relativeTo: button.bounds.offsetBy(dx: 0, dy: -6), of: button, preferredEdge: NSRectEdge.minY)
             popoverView.contentViewController?.view.window?.becomeKey()
             
@@ -305,6 +329,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
 
         }
 
+    }
+
+
+    private func closeMainController(hide: Bool = false) {
+        guard popoverView.isShown else { return }
+        popoverView.close()
+        eventMonitor?.stop()
+        // Give back focus to the app that was active before the popover opened
+        if hide && NSApp.isActive { NSApp.hide(nil) }
     }
 
     

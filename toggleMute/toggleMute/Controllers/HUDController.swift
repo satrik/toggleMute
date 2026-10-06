@@ -162,6 +162,7 @@ final class HUDController {
         newPanel.ignoresMouseEvents = true
         newPanel.collectionBehavior = [.canJoinAllSpaces, .stationary, .ignoresCycle, .fullScreenAuxiliary]
         newPanel.isReleasedWhenClosed = false
+        newPanel.canHide = false
 
         let newEffectView = NSVisualEffectView(frame: NSRect(origin: .zero, size: compactSize))
         newEffectView.material = .hudWindow

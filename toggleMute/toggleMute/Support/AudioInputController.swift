@@ -1,43 +1,238 @@
 import Foundation
 import CoreAudio
 
-/// CoreAudio-backed control for the default input device.
+/// CoreAudio-backed control for the selected input device (default input,
+/// a specific device, or all inputs).
 /// Handles Aggregate Devices by dispatching mute/volume to their input sub-devices,
 /// since AppleScript `set volume input volume` is a no-op on most aggregates.
 enum AudioInputController {
 
     // MARK: - Public API
 
-    static func setMuted(_ muted: Bool) {
-        guard let deviceID = defaultInputDeviceID() else { return }
-        applyMute(deviceID: deviceID, muted: muted)
+    /// `Preferences.inputDeviceSelection` values besides a device UID.
+    static let followDefault = ""
+    static let allMicrophones = "*"
+    static let allInputs = "*+virtual"
+
+    /// Volumes below this count as muted.
+    static let nearZeroVolume: Float32 = 0.05
+
+    static func isSpecificDevice(_ selection: String) -> Bool {
+        return ![followDefault, allMicrophones, allInputs].contains(selection)
+    }
+
+    /// With `zeroVolume`, muting also drives the input volume to 0, for
+    /// devices that dont fully respect the mute property. Unmuting a device
+    /// at volume 0 brings back the last volume it had above zero.
+    static func setMuted(_ muted: Bool, zeroVolume: Bool = false) {
+        if !muted { lastSeenVolume = nil }
+        let targets = targetDeviceIDs()
+        // Unmute any targets previously muted, but no longer targeted (e.g. input device changed)
+        for deviceID in mutedDeviceIDs where !targets.contains(deviceID) {
+            setMuted(deviceID, muted: false, zeroVolume: false)
+        }
+        mutedDeviceIDs = muted ? targets : []
+        for deviceID in targets { setMuted(deviceID, muted: muted, zeroVolume: zeroVolume) }
+    }
+
+    /// The devices the last mute covered.
+    private static var mutedDeviceIDs: [AudioDeviceID] = []
+
+    /// Gives devices at volume 0 their last volume above zero back.
+    static func restoreZeroedVolumes() {
+        lastSeenVolume = nil
+        for deviceID in targetDeviceIDs() { restoreZeroedVolume(deviceID) }
     }
 
     static func isMuted() -> Bool? {
-        guard let deviceID = defaultInputDeviceID() else { return nil }
+        guard let deviceID = primaryDeviceID() else { return nil }
         return readMute(deviceID: deviceID)
     }
 
-    /// `volume` is 0.0 ... 1.0
-    static func setVolume(_ volume: Float32) {
-        guard let deviceID = defaultInputDeviceID() else { return }
-        applyVolume(deviceID: deviceID, volume: volume)
+    /// While `dragging`, the volume unmuting restores is not recorded, so it
+    /// stays the one from before the drag instead of one passed on the way to 0.
+    static func setVolume(_ volume: Float32, dragging: Bool = false) {
+        volumeDragging = dragging
+        queuedVolume = volume
+        if !volumeWriteInFlight { writeQueuedVolume() }
+    }
+
+    // Any HAL call waits until coreaudiod has applied the previous volume
+    // write to the hardware, so writing on main stalls a slider drag. Writes
+    // run one at a time on a queue and skip values a newer one replaced.
+    private static let volumeQueue = DispatchQueue(label: "toggleMute.volume")
+    private static var queuedVolume: Float32?
+    private static var volumeWriteInFlight = false
+    private static var volumeDragging = false
+
+    private static func writeQueuedVolume() {
+        guard let volume = queuedVolume else {
+            volumeWriteInFlight = false
+            syncState()
+            return
+        }
+        queuedVolume = nil
+        volumeWriteInFlight = true
+        volumeQueue.async {
+            for deviceID in targetDeviceIDs() { applyVolume(deviceID: deviceID, volume: volume) }
+            DispatchQueue.main.async(execute: writeQueuedVolume)
+        }
+    }
+
+    static func restoreVolume() -> Float32? {
+        primaryDeviceID().map(restoreVolume)
     }
 
     /// Returns 0.0 ... 1.0, or nil if no readable volume property is present.
     static func volume() -> Float32? {
-        guard let deviceID = defaultInputDeviceID() else { return nil }
+        guard let deviceID = primaryDeviceID() else { return nil }
         return readVolume(deviceID: deviceID)
     }
 
-    /// The default input device's display name (e.g. "MacBook Pro Microphone",
+    /// Whether something other than this app raised the volume from about 0
+    /// since the last call, e.g. a headsets mute button.
+    static func volumeRecoveredExternally() -> Bool {
+        guard let deviceID = primaryDeviceID(), let volume = readVolume(deviceID: deviceID) else {
+            lastSeenVolume = nil
+            return false
+        }
+        let nearZero = volume < nearZeroVolume
+        defer { lastSeenVolume = (deviceID, nearZero) }
+        return lastSeenVolume?.deviceID == deviceID && lastSeenVolume?.nearZero == true && !nearZero
+    }
+
+    /// The controlled input devices display name (e.g. "MacBook Pro Microphone",
     /// "Jabra Elite 7 Pro"), or nil if it can't be read.
     static func deviceName() -> String? {
-        guard let deviceID = defaultInputDeviceID() else { return nil }
-        return readDeviceName(deviceID: deviceID)
+        if selection == allMicrophones { return "All microphones" }
+        if selection == allInputs { return "All inputs" }
+        guard let deviceID = primaryDeviceID() else { return nil }
+        return readString(deviceID, selector: kAudioObjectPropertyName)
+    }
+
+    /// Every device with at least one input stream, for the device picker.
+    static func inputDevices() -> [(uid: String, name: String, isVirtual: Bool)] {
+        return allDeviceIDs().filter(hasInputStream).compactMap { id in
+            guard let uid = readString(id, selector: kAudioDevicePropertyDeviceUID) else { return nil }
+            return (uid, readString(id, selector: kAudioObjectPropertyName) ?? uid, transportType(id) == kAudioDeviceTransportTypeVirtual)
+        }
+    }
+
+    // MARK: - Change listeners
+
+    private static var onDevicesChanged: (() -> Void)?
+    private static var onStateChanged: (() -> Void)?
+    private static var watchedDeviceIDs: [AudioDeviceID] = []
+
+    // Stored once so the identical block can be passed to the remove call.
+    private static let devicesListener: AudioObjectPropertyListenerBlock = { _, _ in
+        refreshWatchedDevices()
+        onDevicesChanged?()
+    }
+    private static var stateSyncScheduled = false
+    // One write notifies once per channel and sub-device; one sync covers the burst.
+    private static let stateListener: AudioObjectPropertyListenerBlock = { _, _ in
+        guard !stateSyncScheduled else { return }
+        stateSyncScheduled = true
+        DispatchQueue.main.async {
+            stateSyncScheduled = false
+            syncState()
+        }
+    }
+
+    private static func syncState() {
+        // Reading now would wait for the write; its completion syncs.
+        guard !volumeWriteInFlight else { return }
+        guard !volumeDragging else { return }
+        recordVolumes()
+        onStateChanged?()
+    }
+
+    private static let systemAddresses = [
+        kAudioHardwarePropertyDefaultInputDevice,
+        kAudioHardwarePropertyDevices,
+    ].map { AudioObjectPropertyAddress(mSelector: $0, mScope: kAudioObjectPropertyScopeGlobal, mElement: kAudioObjectPropertyElementMain) }
+
+    private static let stateAddresses = [
+        kAudioDevicePropertyMute,
+        kAudioDevicePropertyVolumeScalar,
+    ].map { AudioObjectPropertyAddress(mSelector: $0, mScope: kAudioDevicePropertyScopeInput, mElement: kAudioObjectPropertyElementWildcard) }
+
+    /// Calls `devicesChanged` when the set of controlled devices may have
+    /// changed (default input switched, device plugged in or removed) and
+    /// `stateChanged` when mute or input volume of a controlled device
+    /// changes, e.g. from a headsets hardware mute button. Both run on main.
+    static func startMonitoring(devicesChanged: @escaping () -> Void, stateChanged: @escaping () -> Void) {
+        onDevicesChanged = devicesChanged
+        onStateChanged = stateChanged
+        for var address in systemAddresses {
+            AudioObjectAddPropertyListenerBlock(AudioObjectID(kAudioObjectSystemObject), &address, .main, devicesListener)
+        }
+        refreshWatchedDevices()
+    }
+
+    /// Moves the state listeners to the current target devices; called on
+    /// device changes and when the device selection changes.
+    static func refreshWatchedDevices() {
+        for deviceID in watchedDeviceIDs {
+            for var address in stateAddresses {
+                AudioObjectRemovePropertyListenerBlock(deviceID, &address, .main, stateListener)
+            }
+        }
+        watchedDeviceIDs = targetDeviceIDs().flatMap(expandedTargets)
+        for deviceID in watchedDeviceIDs {
+            for var address in stateAddresses {
+                AudioObjectAddPropertyListenerBlock(deviceID, &address, .main, stateListener)
+            }
+        }
+        recordVolumes()
     }
 
     // MARK: - Device lookup
+
+    private static var selection: String {
+        return UserDefaults.standard.string(forKey: "inputDeviceSelection") ?? followDefault
+    }
+
+    /// The selected device, falling back to the default input when the
+    /// selected one is not connected.
+    private static func primaryDeviceID() -> AudioDeviceID? {
+        let selection = self.selection
+        if isSpecificDevice(selection),
+           let id = allDeviceIDs().first(where: { readString($0, selector: kAudioDevicePropertyDeviceUID) == selection }) {
+            return id
+        }
+        return defaultInputDeviceID()
+    }
+
+    private static func targetDeviceIDs() -> [AudioDeviceID] {
+        // Aggregates only repeat their sub-devices, which are listed anyway.
+        // Virtual inputs (Teams/Zoom audio, BlackHole, Loopback) carry app or
+        // system audio rather than a microphone, so only allInputs has them.
+        let selection = self.selection
+        if selection == allMicrophones || selection == allInputs {
+            let excluded = selection == allInputs
+                ? [kAudioDeviceTransportTypeAggregate]
+                : [kAudioDeviceTransportTypeAggregate, kAudioDeviceTransportTypeVirtual]
+            return allDeviceIDs().filter { hasInputStream($0) && !excluded.contains(transportType($0)) }
+        }
+        return primaryDeviceID().map { [$0] } ?? []
+    }
+
+    private static func allDeviceIDs() -> [AudioDeviceID] {
+        var address = AudioObjectPropertyAddress(
+            mSelector: kAudioHardwarePropertyDevices,
+            mScope: kAudioObjectPropertyScopeGlobal,
+            mElement: kAudioObjectPropertyElementMain
+        )
+        let system = AudioObjectID(kAudioObjectSystemObject)
+        var size: UInt32 = 0
+        guard AudioObjectGetPropertyDataSize(system, &address, 0, nil, &size) == noErr,
+              size > 0 else { return [] }
+        var ids = [AudioDeviceID](repeating: kAudioObjectUnknown, count: Int(size) / MemoryLayout<AudioDeviceID>.size)
+        guard AudioObjectGetPropertyData(system, &address, 0, nil, &size, &ids) == noErr else { return [] }
+        return ids
+    }
 
     private static func defaultInputDeviceID() -> AudioDeviceID? {
         var id: AudioDeviceID = kAudioObjectUnknown
@@ -52,6 +247,25 @@ enum AudioInputController {
         )
         guard status == noErr, id != kAudioObjectUnknown else { return nil }
         return id
+    }
+
+    private static func transportType(_ deviceID: AudioDeviceID) -> UInt32 {
+        var address = AudioObjectPropertyAddress(
+            mSelector: kAudioDevicePropertyTransportType,
+            mScope: kAudioObjectPropertyScopeGlobal,
+            mElement: kAudioObjectPropertyElementMain
+        )
+        var transport: UInt32 = kAudioDeviceTransportTypeUnknown
+        var size = UInt32(MemoryLayout<UInt32>.size)
+        AudioObjectGetPropertyData(deviceID, &address, 0, nil, &size, &transport)
+        return transport
+    }
+
+    /// The devices that actually carry mute/volume: the input sub-devices of
+    /// an aggregate, or the device itself.
+    private static func expandedTargets(_ deviceID: AudioDeviceID) -> [AudioDeviceID] {
+        let subs = subDeviceIDs(of: deviceID)
+        return subs.isEmpty ? [deviceID] : subs.filter(hasInputStream)
     }
 
     private static func subDeviceIDs(of aggregate: AudioDeviceID) -> [AudioDeviceID] {
@@ -110,9 +324,59 @@ enum AudioInputController {
 
     // MARK: - Mute
 
+    private static func setMuted(_ deviceID: AudioDeviceID, muted: Bool, zeroVolume: Bool) {
+        applyMute(deviceID: deviceID, muted: muted)
+        if muted {
+            if zeroVolume { applyVolume(deviceID: deviceID, volume: 0) }
+            return
+        }
+        // An unmuted mic at volume 0 stays silent.
+        restoreZeroedVolume(deviceID)
+    }
+
+    private static func restoreZeroedVolume(_ deviceID: AudioDeviceID) {
+        // A drag owns the volume,restoring would move the slider while the user is dragging it.
+        guard !volumeDragging, let volume = readVolume(deviceID: deviceID), volume < nearZeroVolume else { return }
+        applyVolume(deviceID: deviceID, volume: restoreVolume(deviceID))
+    }
+
+    /// The volume unmuting gives a zeroed device back.
+    private static func restoreVolume(_ deviceID: AudioDeviceID) -> Float32 {
+        let last = UserDefaults.standard.dictionary(forKey: lastVolumesKey) as? [String: Double] ?? [:]
+        let uid = readString(deviceID, selector: kAudioDevicePropertyDeviceUID)
+        // 0.8 for devices we havent stored a last volume for yet.
+        return Float32(uid.flatMap { last[$0] } ?? 0.8)
+    }
+
+    // MARK: - Volume memory
+
+    private static let lastVolumesKey = "lastVolumes"
+
+    /// Keeps the last volume above zero of each controlled device, so that
+    /// unmuting can undo a zeroed volume (by this app, a headsets hardware
+    /// mute, or by hand).
+    private static func recordVolumes() {
+        var last = UserDefaults.standard.dictionary(forKey: lastVolumesKey) as? [String: Double] ?? [:]
+        for deviceID in targetDeviceIDs() {
+            guard let uid = readString(deviceID, selector: kAudioDevicePropertyDeviceUID),
+                  let volume = readVolume(deviceID: deviceID), volume >= nearZeroVolume else { continue }
+            last[uid] = Double(volume)
+        }
+        UserDefaults.standard.set(last, forKey: lastVolumesKey)
+    }
+
+    /// Sets the volume unmuting restores on every controlled device.
+    static func setRestoreVolume(_ volume: Float32) {
+        var last = UserDefaults.standard.dictionary(forKey: lastVolumesKey) as? [String: Double] ?? [:]
+        for deviceID in targetDeviceIDs() {
+            guard let uid = readString(deviceID, selector: kAudioDevicePropertyDeviceUID) else { continue }
+            last[uid] = Double(volume)
+        }
+        UserDefaults.standard.set(last, forKey: lastVolumesKey)
+    }
+
     private static func applyMute(deviceID: AudioDeviceID, muted: Bool) {
-        let subs = subDeviceIDs(of: deviceID)
-        let targets = subs.isEmpty ? [deviceID] : subs.filter(hasInputStream)
+        let targets = expandedTargets(deviceID)
         for target in targets {
             if !setMuteProperty(target, muted: muted) {
                 // Fallback when the device exposes no writable mute: drive volume to 0/1.
@@ -150,8 +414,7 @@ enum AudioInputController {
     }
 
     private static func readMute(deviceID: AudioDeviceID) -> Bool? {
-        let subs = subDeviceIDs(of: deviceID)
-        let targets = subs.isEmpty ? [deviceID] : subs.filter(hasInputStream)
+        let targets = expandedTargets(deviceID)
 
         var mutePropertyResult: Bool?
         for target in targets {
@@ -172,7 +435,7 @@ enum AudioInputController {
         // false — not absent — so the fallback below has to run even when
         // mutePropertyResult is a known false, not just when it's nil.
         for target in targets {
-            if let v = readVolumeOnDevice(target), v < 0.05 {
+            if let v = readVolumeOnDevice(target), v < nearZeroVolume {
                 return true
             }
         }
@@ -209,12 +472,16 @@ enum AudioInputController {
 
     private static func applyVolume(deviceID: AudioDeviceID, volume: Float32) {
         let clamped = max(0, min(1, volume))
-        let subs = subDeviceIDs(of: deviceID)
-        let targets = subs.isEmpty ? [deviceID] : subs.filter(hasInputStream)
+        let targets = expandedTargets(deviceID)
         for target in targets {
             _ = setVolumeProperty(target, volume: clamped)
         }
     }
+
+    /// Primary devices volume as of the last volumeRecoveredExternally();
+    /// cleared by unmuting so its restored volume never counts as a recovery.
+    /// Drags skip the sync, so the slider never counts either.
+    private static var lastSeenVolume: (deviceID: AudioDeviceID, nearZero: Bool)?
 
     private static func setVolumeProperty(_ deviceID: AudioDeviceID, volume: Float32) -> Bool {
         if writeVolume(deviceID, channel: kAudioObjectPropertyElementMain, volume: volume) {
@@ -245,8 +512,7 @@ enum AudioInputController {
     }
 
     private static func readVolume(deviceID: AudioDeviceID) -> Float32? {
-        let subs = subDeviceIDs(of: deviceID)
-        let targets = subs.isEmpty ? [deviceID] : subs.filter(hasInputStream)
+        let targets = expandedTargets(deviceID)
         for target in targets {
             if let v = readVolumeOnDevice(target) { return v }
         }
@@ -278,16 +544,16 @@ enum AudioInputController {
         return value
     }
 
-    // MARK: - Device name
+    // MARK: - String properties
 
-    private static func readDeviceName(deviceID: AudioDeviceID) -> String? {
+    private static func readString(_ deviceID: AudioDeviceID, selector: AudioObjectPropertySelector) -> String? {
         var address = AudioObjectPropertyAddress(
-            mSelector: kAudioObjectPropertyName,
+            mSelector: selector,
             mScope: kAudioObjectPropertyScopeGlobal,
             mElement: kAudioObjectPropertyElementMain
         )
         guard AudioObjectHasProperty(deviceID, &address) else { return nil }
-        // kAudioObjectPropertyName hands back an already-retained CFStringRef.
+        // CFString properties hand back an already-retained CFStringRef.
         // A plain `var name: CFString` target doesn't reliably line up with
         // what CoreAudio writes into that memory (Swift's CFString bridging
         // isn't guaranteed to match a raw pointer-sized C write) — Unmanaged

@@ -10,7 +10,6 @@
 		447B1DF9236795F100587E3A /* MainController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 447B1DF8236795F100587E3A /* MainController.swift */; };
 		449F396A2317247B008A0DBD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449F39692317247B008A0DBD /* AppDelegate.swift */; };
 		449F396C2317247C008A0DBD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 449F396B2317247C008A0DBD /* Assets.xcassets */; };
-		449F397C23172ADC008A0DBD /* Controllers.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 449F397B23172ADC008A0DBD /* Controllers.storyboard */; };
 		449F398323173003008A0DBD /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449F398223173003008A0DBD /* Preferences.swift */; };
 		44EB8BD923AC2ABD005A4A0B /* MuteController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44EB8BD723AC2ABD005A4A0B /* MuteController.swift */; };
 		AEAFCF27A52D05DDC0561C8B /* HUDController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76F8C673A42A189D25A17999 /* HUDController.swift */; };
@@ -40,7 +39,6 @@
 		449F396B2317247C008A0DBD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		449F39702317247C008A0DBD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		449F39712317247C008A0DBD /* SettingsController.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SettingsController.entitlements; sourceTree = "<group>"; };
-		449F397B23172ADC008A0DBD /* Controllers.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Controllers.storyboard; sourceTree = "<group>"; };
 		449F398223173003008A0DBD /* Preferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
 		44EB8BD723AC2ABD005A4A0B /* MuteController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MuteController.swift; sourceTree = "<group>"; };
 		76F8C673A42A189D25A17999 /* HUDController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HUDController.swift; sourceTree = "<group>"; };
@@ -101,7 +99,6 @@
 		449F397F23172AE2008A0DBD /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				44D551DC239082090065505A /* Storyboard */,
 				449F398023172AEE008A0DBD /* Assets */,
 				449F39702317247C008A0DBD /* Info.plist */,
 				449F39712317247C008A0DBD /* SettingsController.entitlements */,
@@ -133,14 +130,6 @@
 				C3DA00092B88C00900B6BCCA /* EventMonitor.swift */,
 			);
 			path = Bootstrap;
-			sourceTree = "<group>";
-		};
-		44D551DC239082090065505A /* Storyboard */ = {
-			isa = PBXGroup;
-			children = (
-				449F397B23172ADC008A0DBD /* Controllers.storyboard */,
-			);
-			path = Storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -216,7 +205,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				449F396C2317247C008A0DBD /* Assets.xcassets in Resources */,
-				449F397C23172ADC008A0DBD /* Controllers.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -26,8 +26,6 @@
 	<true/>
 	<key>NSHumanReadableCopyright</key>
 	<string>© 2021-2026 satrik (Sascha Petrik)</string>
-	<key>NSMainStoryboardFile</key>
-	<string>Controllers</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 </dict>
